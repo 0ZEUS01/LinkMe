@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+    <!-- templates/signin.html -->
+{% block title %}
+    <title>Login</title>
+{% endblock %}
+{% block main %}
+<div class="d-flex justify-content-center">
+    <div class="container box-element m-3 border bg-light my-5 rounded-5" style="width:500px">
+        <div class="pt-3"><h4 class="text-dark text-center">Enter your credentials</h4></div>
+        <hr>
+        <form id="loginform" method="post">
+            {{ form.hidden_tag() }}
+            <table class="table-responsive">
+                <tr><td>{{ form.email.label }}</td><td><input class="form-field" id="email" name="email" required="" type="text" value=""></td></tr>
+                <tr><td>{{ form.password.label }}</td><td><input class="form-field" id="password" name="password" required="" type="password" value=""></td></tr>
+            </table>
+            <hr>
+            <div class="pb-3 d-flex justify-content-center">
+                <input id="loginbtn" type="submit" class="btn btn-primary rounded-5" value="Login">
+            </div>
+        </form>
+    </div>
+</div>
+<div class="d-flex justify-content-center">
+    <span class="fs-3 text-secondary">No account yet?<a class="p-2 link-primary" href="/">Sign up</a></span>
+</div>
+{% endblock %}
+<!--<form method="POST">-->
+<!--    {{ form.hidden_tag() }}-->
+<!--    {{ form.email.label }} {{ form.email }} <br>-->
+<!--    {{ form.password.label }} {{ form.password }} <br>-->
+<!--    {{ form.submit }}-->
+
+<!--</form>-->
+<!--<p>Don't have an account? <a href="/signup">SignUp</a></p>-->

@@ -1,0 +1,59 @@
+{% extends 'full_base_navbar.html' %}
+{% block title %}
+    <title>View Profile</title>
+{% endblock %}
+{% block main %}
+<style>
+    .details-box {
+        word-wrap: break-word; /* Ensure long words are broken */
+        overflow-wrap: break-word; /* Ensure long words are broken */
+        max-width: 100%; /* Ensure the box doesn't exceed the container width */
+
+    }
+</style>
+<div class="d-flex justify-content-center">
+    <div class="container box-element m-3 border my-5 rounded-3 shadow" style="width: 600px; max-height: 75vh; overflow-y: auto; background-color: #e6f5f3;">
+        <div class="pt-4">
+            <h2 class="text-center text-dark fs-3">Your Profile</h2>
+        </div>
+        <hr>
+        <div class="text-center mb-4">
+            <h4 class="text-dark">{{ user_details.username }}</h4>
+            {% if user_details.profile_pic %}
+                <img src="{{ user_details.profile_pic }}" alt="Profile Picture" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; border: 3px solid #d4d4d4;">
+            {% else %}
+                <p>No profile picture uploaded.</p>
+            {% endif %}
+        </div>
+        <hr>
+        <div class="form-group">
+            <h3 class="text-dark mb-3 fs-5">Experiences</h3>
+            {% if not user_details.experiences %}
+                <p class="border p-3 rounded bg-light shadow-sm text-muted"></p>
+            {%endif%}
+            {% for experience in user_details.experiences %}
+            <div class="border p-3 rounded mb-3 bg-light shadow-sm details-box">
+                <div class="align-items-center">
+                    <div class="text-primary">
+                        <span class="font-weight-bold">{{  experience.start_date  }}</span> to 
+                        <span class="font-weight-bold">{{  experience.end_date  }}</span>
+                    </div>
+                    <h5 class="font-weight-bold text-secondary mb-0 ml-3">{{ experience.title }}</h5>
+                </div>
+                <p class="text-muted mt-2">{{ experience.description }}</p>
+            </div>
+            
+            {% endfor %}
+        </div>
+        <hr>
+        <div class="form-group details-box">
+            <h3 class="text-dark mb-3 fs-5">Skills</h3>
+            <p class="border p-3 rounded bg-light shadow-sm text-muted">{{ user_details.skills | join(', ') }}</p>
+        </div>
+        <hr>
+        <div class="pb-4 d-flex justify-content-center">
+            <a href="{{ url_for('profile_blueprint.update_profile') }}" class="btn btn-primary rounded-pill shadow-lg">Edit Profile</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

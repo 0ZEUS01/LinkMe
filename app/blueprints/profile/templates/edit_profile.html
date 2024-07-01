@@ -1,0 +1,192 @@
+{% extends 'edit_page_base.html' %}
+{% block title %}
+    <title>Edit Profile</title>
+{% endblock %}
+{% block main %}
+<style>
+    .ui-autocomplete {
+        max-width: 300px; /* Adjust width as needed */
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .ui-autocomplete li {
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    .ui-autocomplete {
+        background-color: #29333d; /* Blue background */
+        color: white; /* White text on hover */
+        padding: 10px; /* Increased padding */
+        margin: -5px -10px; /* Overlap with previous item */
+    }
+
+    .selected-skills {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .selected-skills li {
+        display: inline-block;
+        margin-right: 15px;
+        margin-top: 15px;
+        background-color: #1458a0;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        position: relative;
+    }
+
+    .selected-skills li .close {
+        position: absolute;
+        right: -5px;
+        top: -5px;
+        background-color: white;
+        color: #007bff;
+        border: none;
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        border-radius: 50%;
+        font-size: 12px;
+    }
+
+    .selected-skills li .close:hover {
+        background-color: #007bff;
+        color: white;
+    }
+</style>
+<div class="d-flex justify-content-center">
+    <div class="container box-element m-3 border bg-light my-5 rounded-5" style="width:600px; max-height: 75vh; overflow-y: auto;background-color: #e6f5f3;">
+        <div class="pt-3"><h4 class="text-dark text-center">Edit Your Profile</h4></div>
+        <hr>
+        <form method="post" enctype="multipart/form-data" action="{{ url_for('profile_blueprint.edit_profile') }}">
+            <div class="form-group my-2">
+                <label for="profile_pic" class="text-secondary">Profile Picture</label>
+                <input type="file" class="form-control-file" id="profile_pic" name="profile_pic" required>
+            </div>
+
+            <div id="experiences_container">
+                <!-- Experiences dynamically added here -->
+            </div>
+            <button type="button" class="btn btn-primary" id="add_experience">Add Experience</button>
+            <hr>
+
+            <div class="form-group">
+                <label for="skills" class="text-secondary">Add Skills</label>
+                <input type="text" id="skills" class="form-control" value="">
+                <button type="button" class="btn btn-primary mt-2" id="add_skill">Add Skill</button>
+                <span class="error text-danger"></span>
+            </div>
+            <input type="hidden" id="selectedSkillsInput" name="skills">
+
+            <div class="form-group">
+                <label>Your Skills:</label>
+                <ul class="selected-skills" id="selectedSkills"></ul>
+            </div>
+
+            <hr>
+            <div class="pb-3 d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary rounded-5" disabled>Update Profile</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var availableSkills = [];
+        $.ajax({
+            url: '/profile/skills',
+            method: 'GET',
+            success: function(data) {
+                availableSkills = data;
+                $("#skills").autocomplete({
+                    source: function(request, response) {
+                        var results = $.ui.autocomplete.filter(availableSkills, request.term);
+                        response(results.slice(0, 2)); // Limit to 2 suggestions
+                    },
+                    minLength: 1,
+                    select: function(event, ui) {
+                        setTimeout(function() {
+                            $("#skills").val(""); // Clear input field after selection with a delay
+                        }, 100);
+                        addSkill(ui.item.value); // Add selected skill
+                    },
+                    appendTo: "#autocomplete-container", // Optional container for better positioning
+                    position: { my: "left top", at: "left bottom", collision: "flip" } // Positioning options
+                });
+            },
+            error: function() {
+                console.error("Failed to fetch skills from server.");
+            }
+        });
+
+        // Function to add selected skill to the list
+        function addSkill(skill) {
+            var selectedSkills = $("#selectedSkills");
+            var existingSkills = selectedSkills.find("li");
+
+            // Check if skill already exists in the list (case insensitive and trimmed)
+            if (!existingSkills.filter(function() {
+                return $(this).text().trim().toLowerCase().replace(' ×', '') === skill.trim().toLowerCase();
+            }).length) {
+                // Add skill to the list
+                selectedSkills.append('<li class="list-group-item">' + skill + ' <button type="button" class="close">&times;</button></li>');
+                $('.error').html(''); // Clear any previous error messages
+            } else {
+                // Show error if skill already selected
+                $('.error').html(skill + ' is already selected');
+            }
+
+            updateHiddenInput();
+        }
+
+        // Add custom skills on button click
+        $("#add_skill").click(function() {
+            var customSkill = $("#skills").val().trim();
+            if (customSkill) {
+                addSkill(customSkill);
+                $("#skills").val(""); // Clear the input field
+            }
+        });
+
+        // Event delegation for closing button
+        $("#selectedSkills").on("click", ".close", function() {
+            $(this).closest("li").remove();
+            updateHiddenInput(); // Update hidden input with selected skills
+        });
+
+        // Update hidden input with selected skills
+        function updateHiddenInput() {
+            var selectedSkills = $("#selectedSkills li").map(function() {
+                return $(this).text().replace(' ×', '').trim(); // Trim whitespace
+            }).get().join(",");
+            $("#selectedSkillsInput").val(selectedSkills);
+            if (selectedSkills) {
+                $('form button[type="submit"]').prop('disabled', false); // Enable submit button
+            } else {
+                $('form button[type="submit"]').prop('disabled', true); // Disable submit button
+            }
+        }
+
+        // Function to add new experience input fields dynamically
+        $("#add_experience").click(function() {
+            var html = '<div class="experience-item"><div class="form-group"><label class="text-secondary">Title</label><input type="text" class="form-control" name="experience_title" required></div><div class="form-group"><label class="text-secondary">Description</label><textarea class="form-control" name="experience_description" rows="3"></textarea></div><div class="form-group"><label class="text-secondary">Start Date</label><input type="date" class="form-control" name="experience_start_date"></div><div class="form-group"><label class="text-secondary">End Date</label><input type="date" class="form-control" name="experience_end_date"></div><button type="button" class="btn btn-danger remove_experience my-2">Remove Experience</button></div><hr> ';
+            $("#experiences_container").append(html);
+        });
+
+        // Event delegation for removing experience fields
+        $("#experiences_container").on("click", ".remove_experience", function() {
+            $(this).closest(".experience-item").next("hr").remove(); // Remove the next <hr> tag
+            $(this).closest(".experience-item").remove(); // Remove the entire experience section
+        });
+    });
+</script>
+{% endblock %}
