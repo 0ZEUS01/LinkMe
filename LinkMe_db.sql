@@ -2,11 +2,30 @@ DROP DATABASE IF EXISTS LinkMe;
 create database LinkMe;
 use LinkMe;
 
+CREATE TABLE Country (
+			country_id INT AUTO_INCREMENT,
+			country_name VARCHAR(100),
+			ISO VARCHAR(100),
+			CONSTRAINT PK_COUNTRY PRIMARY KEY (country_id)
+		);
+		
+
 CREATE TABLE users (
-    username VARCHAR(100),
-    email VARCHAR(100) PRIMARY KEY,
-    password VARCHAR(100)
-);
+			first_name VARCHAR(100),
+			last_name VARCHAR(100),
+			email VARCHAR(100),
+			phone_number VARCHAR(100),
+			username VARCHAR(100),
+			password VARCHAR(100),
+			birthdate DATE,
+			Address VARCHAR(100),
+			nationality INT,
+            profile_pic_path VARCHAR(255),
+			isAdmin BIT DEFAULT 0,
+			CONSTRAINT PK_USERS PRIMARY KEY (email),
+			CONSTRAINT FK_COUNTRY_USERS FOREIGN KEY (nationality) REFERENCES Country(country_id)
+		);
+		
 CREATE TABLE skills (
     skill_id INT AUTO_INCREMENT PRIMARY KEY,
     skill_name VARCHAR(100) UNIQUE NOT NULL
@@ -27,12 +46,7 @@ CREATE TABLE experiences (
     end_date DATE,
     FOREIGN KEY (email) REFERENCES users(email)
 );
-CREATE TABLE profile_pictures (
-    profile_id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(100),
-    profile_pic_path VARCHAR(255),
-    FOREIGN KEY (email) REFERENCES users(email)
-);
+
 CREATE TABLE jobs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     job_title VARCHAR(255) NOT NULL,

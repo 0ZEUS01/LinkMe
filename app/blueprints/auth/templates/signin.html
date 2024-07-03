@@ -1,35 +1,105 @@
-{% extends 'base.html' %}
-    <!-- templates/signin.html -->
-{% block title %}
-    <title>Login</title>
-{% endblock %}
-{% block main %}
-<div class="d-flex justify-content-center">
-    <div class="container box-element m-3 border bg-light my-5 rounded-5" style="width:500px">
-        <div class="pt-3"><h4 class="text-dark text-center">Enter your credentials</h4></div>
-        <hr>
-        <form id="loginform" method="post">
-            {{ form.hidden_tag() }}
-            <table class="table-responsive">
-                <tr><td>{{ form.email.label }}</td><td><input class="form-field" id="email" name="email" required="" type="text" value=""></td></tr>
-                <tr><td>{{ form.password.label }}</td><td><input class="form-field" id="password" name="password" required="" type="password" value=""></td></tr>
-            </table>
-            <hr>
-            <div class="pb-3 d-flex justify-content-center">
-                <input id="loginbtn" type="submit" class="btn btn-primary rounded-5" value="Login">
-            </div>
-        </form>
-    </div>
-</div>
-<div class="d-flex justify-content-center">
-    <span class="fs-3 text-secondary">No account yet?<a class="p-2 link-primary" href="/">Sign up</a></span>
-</div>
-{% endblock %}
-<!--<form method="POST">-->
-<!--    {{ form.hidden_tag() }}-->
-<!--    {{ form.email.label }} {{ form.email }} <br>-->
-<!--    {{ form.password.label }} {{ form.password }} <br>-->
-<!--    {{ form.submit }}-->
+<html lang="en" class="light-style customizer-hide" dir="ltr" data-theme="theme-default" data-template="vertical-menu-template-free">
 
-<!--</form>-->
-<!--<p>Don't have an account? <a href="/signup">SignUp</a></p>-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+  <title>Login</title>
+
+  <meta name="description" content="" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/icons/linkme.png') }}" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap"
+    rel="stylesheet" />
+
+  <!-- Icons. Uncomment required icon fonts -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fonts/boxicons.css') }}" />
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/core.css') }}" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/theme-default.css') }}" class="template-customizer-theme-css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/demo.css') }}" />
+
+  <!-- Vendors CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+
+  <!-- Page CSS -->
+  <!-- Page -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/pages/page-auth.css') }}" />
+  <!-- Helpers -->
+  <script src="{{ url_for('static', filename='vendor/js/helpers.js') }}"></script>
+
+  <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+</head>
+
+<body background="{{ url_for('static', filename='img/backgrounds/meetings-page-bg.jpg') }}">
+  <!-- Content -->
+
+  <div class="container-xxl">
+    <div class="authentication-wrapper-old authentication-basic container-p-y">
+      <div class="authentication-inner">
+        <div class="card">
+          <div class="card-body">
+            <div class="app-brand justify-content-center">
+              <a href="../landing/index_guest.html" class="app-brand-link gap-2">
+                <img src="{{ url_for('static', filename='img/icons/linkme.png') }}" alt="logo" width="100px">
+              </a>
+            </div>
+            <h4 class="mb-2">Welcome to Link<span style="color: #783b64;">Me</span>! 👋</h4>
+            <p class="mb-4">Please sign-in to your account and start the adventure</p>
+            
+            <form id="formLogin" class="SigninForm mb-3" action="{{ url_for('auth_blueprint.signin') }}" method="POST">
+              {{ form.hidden_tag() }}
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                {{ form.email(class_="form-control", placeholder="Enter your email", autofocus=True) }}
+              </div>
+              <div class="mb-3 form-password-toggle">
+                <div class="d-flex justify-content-between">
+                  <label class="form-label" for="password">Password</label>
+                  <a href="{{ url_for('auth_blueprint.signup') }}">
+                    <b><small style="color: #783b64">Forgot Password?</small></b>
+                  </a>
+                </div>
+                <div class="input-group input-group-merge">
+                  {{ form.password(class_="form-control", placeholder="••••••••••••") }}
+                  <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="remember-me" />
+                  <label class="form-check-label" for="remember-me"> Remember Me </label>
+                </div>
+              </div>
+              <div class="mb-3">
+                {{ form.submit(class_="btn btn-primary d-grid w-100", style="background-color: #A993FF; border: #f8020b;") }}
+              </div>
+            </form>
+            
+            <p class="text-center">
+              <span>New on our platform?</span>
+              <a href="{{ url_for('auth_blueprint.signup') }}">
+                <span style="color: #783b64">Create an account</span>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='vendor/libs/jquery/jquery.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/libs/popper/popper.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/js/bootstrap.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/js/menu.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+</body>
+
+</html>

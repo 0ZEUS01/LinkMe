@@ -1,36 +1,202 @@
-{% extends 'base.html' %}
-    <!-- templates/signup.html -->
-{% block title %}
-    <title>Sign Up</title>
-{% endblock %}
-{% block main %}
-<div class="d-flex justify-content-center">
-    <div class="container box-element m-3 border bg-light my-5 rounded-5" style="width:500px">
-        <div class="pt-3"><h4 class="text-dark text-center">Enter your credentials</h4></div>
-        <hr>
-        <form method="post">
-            {{ form.hidden_tag() }}
-            <table class="table-responsive">
-                <tr><td>{{ form.username.label }}</td><td><input class="form-field" id="username" name="username" required="" type="text" value=""></td></tr>
-                <tr><td>{{ form.email.label }}</td><td><input class="form-field" id="email" name="email" required="" type="text" value=""></td></tr>
-                <tr><td>{{ form.password.label }}</td><td><input class="form-field" id="password" name="password" minlength="3" required="" type="password" value=""></td></tr>
-            </table>
-            <hr>
-            <div class="pb-3 d-flex justify-content-center">
-                <input id="signupbtn" type="submit" class="btn btn-primary rounded-5" value="Sign Up">
+<!DOCTYPE html>
+<html lang="en" class="light-style customizer-hide" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+  <title>Register</title>
+  <meta name="description" content="" />
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/icons/linkme.png') }}" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet" />
+  <!-- Icons. Uncomment required icon fonts -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fonts/boxicons.css') }}" />
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/core.css') }}" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/theme-default.css') }}" class="template-customizer-theme-css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/demo.css') }}" />
+  <!-- Vendors CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+  <!-- Page CSS -->
+  <!-- Page -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/pages/page-auth.css') }}" />
+  <!-- Helpers -->
+  <script src="{{ url_for('static', filename='vendor/js/helpers.js') }}"></script>
+  <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+  <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+  <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+</head>
+
+<body background="{{ url_for('static', filename='img/backgrounds/meetings-page-bg.jpg') }}">
+  <!-- Content -->
+  <div class="container-xxl">
+    <div class="authentication-wrapper authentication-basic container-p-y">
+      <div class="authentication-inner">
+        <!-- Register Card -->
+        <div class="card">
+          <div class="card-body">
+            <!-- Logo -->
+            <div class="app-brand justify-content-center">
+              <a href="../landing/index_guest.html" class="app-brand-link gap-2">
+                <img src="{{ url_for('static', filename='img/icons/linkme.png') }}" alt="logo" width="100px">
+              </a>
             </div>
-        </form>
+            <!-- /Logo -->
+            <h4 class="mb-2">Adventure starts here 🚀</h4>
+            <p class="mb-3"></p>
+
+            <form id="formRegister" class="mb-3" action="/" method="POST" enctype="multipart/form-data">
+              {{ form.hidden_tag() }}
+              <div class="row">
+                <div class="card-body">
+                  <div class="d-flex align-items-start align-items-sm-center gap-4">
+                    <img src="{{ url_for('static', filename='img/avatars/1.png') }}" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+                    <div class="button-wrapper">
+                      <label for="picture" class="btn btn-primary me-2 mb-4" tabindex="0" style="background-color: #A993FF; border: #f8020b;">
+                        <i class="bx bx-upload d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Upload new photo</span>
+                        <input type="file" id="picture" name="picture" class="account-file-input" accept="image/png, image/jpeg" onchange="showPreview(event)" />
+                      </label>
+                      <p class="text-muted mb-0">Allowed JPG, or PNG.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="FirstName" class="form-label">First Name <span style="color: red;">*</span></label>
+                    <input type="text" class="form-control" id="FirstName" name="FirstName" placeholder="Enter your first name" autofocus>
+                  </div>
+                  <div class="mb-3">
+                    <label for="PhoneNumber" class="form-label">Phone Number <span style="color: red;">*</span></label>
+                    <input type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="Enter your phone number" autofocus>
+                  </div>
+                  <div class="mb-3">
+                    <label for="BirthDate" class="form-label">Birth Date <span style="color: red;">*</span></label>
+                    <input type="date" class="form-control" id="BirthDate" name="BirthDate" placeholder="Enter your birth date" autofocus>
+                  </div>
+                  <div class="mb-3">
+                    <label for="email" class="form-label">Email <span style="color: red;">*</span></label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="LastName" class="form-label">Last Name <span style="color: red;">*</span></label>
+                    <input type="text" class="form-control" id="LastName" name="LastName" placeholder="Enter your last name" autofocus>
+                  </div>
+                  <div class="mb-3">
+                    <label for="username" class="form-label">Username <span style="color: red;">*</span></label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" autofocus>
+                  </div>
+                  <div class="mb-3 form-password-toggle">
+                    <label class="form-label" for="password">Password <span style="color: red;">*</span></label>
+                    <div class="input-group input-group-merge">
+                      <input type="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password">
+                      <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                    </div>
+                  </div>
+                  <div class="mb-3 form-password-toggle">
+                    <label class="form-label" for="c_password">Confirm password <span style="color: red;">*</span></label>
+                    <div class="input-group input-group-merge">
+                      <input type="password" id="c_password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password">
+                      <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-3 col-md-6">
+                  <label class="form-label" for="country">Nationality <span style="color: red;">*</span></label>
+                  <select id="country" name="country" class="form-select">
+                    <option value="#" selected>Select Your Nationality</option>
+                    {% for country in countries %}
+                      <option value="{{ country['country_id'] }}">{{ country['country_name'] }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3 col-md-6">
+                  <label for="Address" class="form-label">Address <span style="color: red;">*</span></label>
+                  <input type="text" class="form-control" id="Address" name="Address" placeholder="Enter your Address">
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms">
+                    <label class="form-check-label" for="terms-conditions">
+                      I agree to <a href="javascript:void(0);" style="color: #783b64">privacy policy & terms</a> <span style="color: red;">*</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-primary d-grid w-100" type="submit" id="signupbtn" style="background-color: #A993FF; border: #f8020b;">Sign up</button>
+            </form>
+
+            <p class="text-center">
+              <span>Already have an account?</span>
+              <a href="login" style="color: #A993FF;">
+                <span>Sign in instead</span>
+              </a>
+            </p>
+          </div>
+        </div>
+        <!-- Register Card -->
+      </div>
     </div>
-</div>
-<div class="d-flex justify-content-center">
-    <span class="fs-3 text-secondary">Already have an account?<a class="p-2 link-primary" href="/signin">Sign in</a></span>
-</div>
-{% endblock %}
-<!--<form method="POST">-->
-<!--    {{ form.hidden_tag() }}-->
-<!--    {{ form.username.label }} {{ form.username }} <br>-->
-<!--    {{ form.email.label }} {{ form.email }} <br>-->
-<!--    {{ form.password.label }} {{ form.password }} <br>-->
-<!--    {{ form.submit }}-->
-<!--</form>-->
-<!--<p>Already have an account? <a href="/signin">Signin</a></p>-->
+  </div>
+  <!-- / Content -->
+
+  <!-- Core JS -->
+  <!-- build:js assets/vendor/js/core.js -->
+  <script src="{{ url_for('static', filename='vendor/libs/jquery/jquery.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/libs/popper/popper.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/js/bootstrap.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/js/menu.js') }}"></script>
+  <!-- endbuild -->
+  <!-- Vendors JS -->
+  <!-- Main JS -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <!-- Page JS -->
+  <!-- Place this tag in your head or just before your close body tag. -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Custom JS to show image preview and validate form -->
+  <script>
+    function showPreview(event) {
+      if (event.target.files.length > 0) {
+        var src = URL.createObjectURL(event.target.files[0]);
+        var preview = document.getElementById("uploadedAvatar");
+        preview.src = src;
+        preview.style.display = "block";
+      }
+    }
+
+    function validateForm(event) {
+      event.preventDefault();
+      var form = document.getElementById('formRegister');
+      var requiredFields = ['FirstName', 'LastName', 'username', 'email', 'password', 'c_password', 'PhoneNumber', 'BirthDate', 'country', 'Address', 'terms-conditions'];
+      var missingFields = [];
+
+      requiredFields.forEach(function(field) {
+        var element = document.getElementById(field);
+        if (field === 'terms-conditions') {
+          if (!element.checked) {
+            missingFields.push(field);
+          }
+        } else if (!element.value) {
+          missingFields.push(field);
+        }
+      });
+
+      if (missingFields.length > 0) {
+        alert('Please fill out all required fields.');
+        return false;
+      }
+
+      form.submit();
+      return true;
+    }
+
+    document.getElementById('formRegister').addEventListener('submit', validateForm);
+  </script>
+</body>
+
+</html>
