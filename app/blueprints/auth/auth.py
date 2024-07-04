@@ -131,6 +131,7 @@ def signin():
         if account and bcrypt.checkpw(password.encode('utf-8'), account['password'].encode('utf-8')):
             session['email'] = email
             session['username'] = account['username']
+            session['id'] = account['id']
             cursor.close()
             return redirect(url_for('profile_blueprint.profile'))
         
