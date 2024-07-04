@@ -167,7 +167,7 @@ INSERT INTO country (country_name, ISO) VALUES ('Norway', 'NO');
 INSERT INTO country (country_name, ISO) VALUES ('Oman', 'OM');
 INSERT INTO country (country_name, ISO) VALUES ('Pakistan', 'PK');
 INSERT INTO country (country_name, ISO) VALUES ('Palau', 'PW');
-INSERT INTO country (country_name, ISO) VALUES ('Palestine, State of', 'PS');
+INSERT INTO country (country_name, ISO) VALUES ('Palestine', 'PS');
 INSERT INTO country (country_name, ISO) VALUES ('Panama', 'PA');
 INSERT INTO country (country_name, ISO) VALUES ('Papua New Guinea', 'PG');
 INSERT INTO country (country_name, ISO) VALUES ('Paraguay', 'PY');

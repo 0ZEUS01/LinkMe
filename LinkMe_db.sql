@@ -11,6 +11,7 @@ CREATE TABLE Country (
 		
 
 CREATE TABLE users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
 			first_name VARCHAR(100),
 			last_name VARCHAR(100),
 			email VARCHAR(100),
@@ -22,8 +23,9 @@ CREATE TABLE users (
 			nationality INT,
             profile_pic_path VARCHAR(255),
 			isAdmin BIT DEFAULT 0,
-			CONSTRAINT PK_USERS PRIMARY KEY (email),
-			CONSTRAINT FK_COUNTRY_USERS FOREIGN KEY (nationality) REFERENCES Country(country_id)
+			CONSTRAINT FK_COUNTRY_USERS FOREIGN KEY (nationality) REFERENCES Country(country_id),
+            CONSTRAINT UNIQUE_EMAIL UNIQUE (email),
+            CONSTRAINT UNIQUE_USERNAME UNIQUE (username)
 		);
 		
 CREATE TABLE skills (

@@ -15406,7 +15406,7 @@ html:not(.layout-menu-fixed) .menu-inner-shadow {
 
   .layout-menu-fixed:not(.layout-menu-collapsed) .layout-page,
 .layout-menu-fixed-offcanvas:not(.layout-menu-collapsed) .layout-page {
-    padding-left: 16.25rem;
+    padding-left: 0.25rem;
   }
 }
 html:not(.layout-navbar-fixed):not(.layout-menu-fixed):not(.layout-menu-fixed-offcanvas) .layout-page,
@@ -15459,7 +15459,7 @@ html:not(.layout-footer-fixed) .content-wrapper {
 
 @media (min-width: 1200px) {
   .layout-footer-fixed:not(.layout-menu-collapsed) .layout-wrapper:not(.layout-without-menu) .content-footer {
-    left: 16.25rem;
+    left: 0rem;
   }
 }
 @media (max-width: 1199.98px) {
@@ -15513,7 +15513,7 @@ html:not(.layout-footer-fixed) .content-wrapper {
 }
 
 .layout-footer-fixed .content-footer {
-  z-index: 1030;
+  z-index: 0;
 }
 
 @media (max-width: 1199.98px) {

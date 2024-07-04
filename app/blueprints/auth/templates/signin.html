@@ -40,59 +40,62 @@
 <body background="{{ url_for('static', filename='img/backgrounds/meetings-page-bg.jpg') }}">
   <!-- Content -->
 
-  <div class="container-xxl">
+  {% block content %}
+<div class="container-xxl">
     <div class="authentication-wrapper-old authentication-basic container-p-y">
-      <div class="authentication-inner">
-        <div class="card">
-          <div class="card-body">
-            <div class="app-brand justify-content-center">
-              <a href="../landing/index_guest.html" class="app-brand-link gap-2">
-                <img src="{{ url_for('static', filename='img/icons/linkme.png') }}" alt="logo" width="100px">
-              </a>
+        <div class="authentication-inner">
+            <div class="card">
+                <div class="card-body">
+                    <div class="app-brand justify-content-center">
+                        <a href="../landing/index_guest.html" class="app-brand-link gap-2">
+                            <img src="{{ url_for('static', filename='img/icons/linkme.png') }}" alt="logo" width="100px">
+                        </a>
+                    </div>
+                    <h4 class="mb-2">Welcome to Link<span style="color: #783b64;">Me</span>! 👋</h4>
+                    <p class="mb-4">Please sign-in to your account and start the adventure</p>
+                    
+                    <form id="formLogin" class="SigninForm mb-3" action="{{ url_for('auth_blueprint.signin') }}" method="POST">
+                        {{ form.hidden_tag() }}
+                        {{ form.csrf_token }}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            {{ form.email(class_="form-control", placeholder="Enter your email", autofocus=True) }}
+                        </div>
+                        <div class="mb-3 form-password-toggle">
+                            <div class="d-flex justify-content-between">
+                                <label class="form-label" for="password">Password</label>
+                                <a href="{{ url_for('auth_blueprint.signup') }}">
+                                    <b><small style="color: #783b64">Forgot Password?</small></b>
+                                </a>
+                            </div>
+                            <div class="input-group input-group-merge">
+                                {{ form.password(class_="form-control", placeholder="••••••••••••") }}
+                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="remember-me" />
+                                <label class="form-check-label" for="remember-me"> Remember Me </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            {{ form.submit(class_="btn btn-primary d-grid w-100", style="background-color: #A993FF; border: #f8020b;") }}
+                        </div>
+                    </form>
+                    
+                    <p class="text-center">
+                        <span>New on our platform?</span>
+                        <a href="{{ url_for('auth_blueprint.signup') }}">
+                            <span style="color: #783b64">Create an account</span>
+                        </a>
+                    </p>
+                </div>
             </div>
-            <h4 class="mb-2">Welcome to Link<span style="color: #783b64;">Me</span>! 👋</h4>
-            <p class="mb-4">Please sign-in to your account and start the adventure</p>
-            
-            <form id="formLogin" class="SigninForm mb-3" action="{{ url_for('auth_blueprint.signin') }}" method="POST">
-              {{ form.hidden_tag() }}
-              <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                {{ form.email(class_="form-control", placeholder="Enter your email", autofocus=True) }}
-              </div>
-              <div class="mb-3 form-password-toggle">
-                <div class="d-flex justify-content-between">
-                  <label class="form-label" for="password">Password</label>
-                  <a href="{{ url_for('auth_blueprint.signup') }}">
-                    <b><small style="color: #783b64">Forgot Password?</small></b>
-                  </a>
-                </div>
-                <div class="input-group input-group-merge">
-                  {{ form.password(class_="form-control", placeholder="••••••••••••") }}
-                  <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                </div>
-              </div>
-              <div class="mb-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="remember-me" />
-                  <label class="form-check-label" for="remember-me"> Remember Me </label>
-                </div>
-              </div>
-              <div class="mb-3">
-                {{ form.submit(class_="btn btn-primary d-grid w-100", style="background-color: #A993FF; border: #f8020b;") }}
-              </div>
-            </form>
-            
-            <p class="text-center">
-              <span>New on our platform?</span>
-              <a href="{{ url_for('auth_blueprint.signup') }}">
-                <span style="color: #783b64">Create an account</span>
-              </a>
-            </p>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
+{% endblock %}
   <script src="{{ url_for('static', filename='vendor/libs/jquery/jquery.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/libs/popper/popper.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/js/bootstrap.js') }}"></script>

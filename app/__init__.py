@@ -11,7 +11,7 @@ def create_app():
     from app.blueprints.job.job import job_blueprint
 
     app.register_blueprint(auth_blueprint)
-    app.register_blueprint(profile_blueprint, url_prefix='/profile')
+    app.register_blueprint(profile_blueprint)
     app.register_blueprint(job_blueprint)
 
     app.config['SECRET_KEY'] = 'your_secret_key'
@@ -19,7 +19,7 @@ def create_app():
     app.config['MYSQL_USER'] = 'root'
     app.config['MYSQL_PASSWORD'] = ''
     app.config['MYSQL_DB'] = 'LinkMe' 
-    app.config['UPLOAD_FOLDER'] = 'C:/Users/Yahya/Desktop/LinkMe/app/blueprints/profile/static/uploads'
+    app.config['UPLOAD_FOLDER'] = 'C:\\Users\\Yahya\\Desktop\\LinkMe\\app\\static\\users_pfp'
 
     mysql.init_app(app)
     app.mysql = mysql

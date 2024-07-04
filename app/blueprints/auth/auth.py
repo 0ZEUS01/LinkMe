@@ -1,8 +1,8 @@
 import os
-from flask import Blueprint, render_template, redirect, url_for, request, session, current_app, flash
+from flask import Flask, render_template, redirect, url_for, flash, session, current_app
+from flask import Blueprint
 from .forms import SignupForm, SigninForm
 from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash, check_password_hash
 import MySQLdb.cursors
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, static_folder='static', template_folder='templates')
@@ -10,11 +10,17 @@ auth_blueprint = Blueprint('auth_blueprint', __name__, static_folder='static', t
 UPLOAD_FOLDER = 'C:\\Users\\Yahya\\Desktop\\LinkMe\\app\\static\\users_pfp'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
+def get_countries():
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT country_id, country_name FROM country')
+    countries = cursor.fetchall()
+    return countries
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def save_user_data(data, profile_pic_filename=None):
-    cursor = current_app.mysql.connection.cursor()
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     if profile_pic_filename:
         profile_pic_path = os.path.join(UPLOAD_FOLDER, profile_pic_filename)
     else:
@@ -35,36 +41,19 @@ def user_exists(email):
         return True
     return False
 
-def get_countries():
+def username_exists(username):
     cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT country_id, country_name FROM country')
-    countries = cursor.fetchall()
-    return countries
-
-
-def valid_user(email, password):
-    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+    cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
     account = cursor.fetchone()
     if account:
-        # Check if the hashed password matches the provided password
-        if check_password_hash(account['password'], password):
-            return True
+        return True
     return False
-
-def get_name_from_email(email):
-    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT username FROM users WHERE email = %s', (email,))
-    account = cursor.fetchone()
-    if account:
-        return account['username']
-    return ''
 
 @auth_blueprint.route('/logout', methods=['GET'])
 def logout():
-    session.pop('email')
-    session.pop('username')
-    return redirect('/signin')
+    session.pop('email', None)
+    session.pop('username', None)
+    return redirect(url_for('auth_blueprint.signin'))
 
 @auth_blueprint.route('/', methods=['GET', 'POST'])
 def signup():
@@ -74,7 +63,7 @@ def signup():
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
-        password = generate_password_hash(form.password.data, method='scrypt')
+        password = form.password.data
         first_name = form.FirstName.data
         last_name = form.LastName.data
         phone_number = form.PhoneNumber.data
@@ -84,7 +73,11 @@ def signup():
         terms = form.terms.data
 
         if user_exists(email):
-            flash("User with same email already exists", 'danger')
+            flash("User with the same email already exists", 'danger')
+            return redirect(url_for('auth_blueprint.signup'))
+
+        if username_exists(username):
+            flash("Username is already taken", 'danger')
             return redirect(url_for('auth_blueprint.signup'))
 
         profile_pic_filename = None
@@ -123,34 +116,23 @@ def signup():
 
     return render_template('signup.html', form=form, countries=countries)
 
-
-
 @auth_blueprint.route('/signin', methods=['GET', 'POST'])
 def signin():
     form = SigninForm()
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
-        if valid_user(email, password):  # Assuming valid_user checks credentials
+        
+        cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM users WHERE email = %s AND password = %s', (email, password))
+        account = cursor.fetchone()
+        cursor.close()
+
+        if account:
             session['email'] = email
-            session['username'] = get_name_from_email(email)
-            
-            # Check if the user has at least one skill entry
-            cursor = current_app.mysql.connection.cursor()
-            cursor.execute('''
-                SELECT COUNT(*) AS count_skills
-                FROM user_skills
-                WHERE email = %s
-            ''', (email,))
-            count_skills = cursor.fetchone()[0]  # Access the count directly
-            
-            if count_skills > 0:
-                # User has at least one skill, redirect to view profile
-                return redirect(url_for('profile_blueprint.view_profile'))
-            else:
-                # User has not entered any skills, redirect to edit profile
-                return redirect(url_for('profile_blueprint.edit_profile'))
-            
+            session['username'] = account['username']
+            return redirect(url_for('profile_blueprint.profile'))
+        
         flash('Invalid email or password!', 'danger')
-    
+
     return render_template('signin.html', form=form)

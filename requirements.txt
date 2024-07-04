@@ -12,3 +12,4 @@ flask_wtf
 mysql-connector-python
 openpyxl
 email_validator
+PyJWT

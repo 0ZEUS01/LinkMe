@@ -66,48 +66,48 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label for="FirstName" class="form-label">First Name <span style="color: red;">*</span></label>
-                    <input type="text" class="form-control" id="FirstName" name="FirstName" placeholder="Enter your first name" autofocus>
+                    <input type="text" class="form-control" required="" id="FirstName" name="FirstName" placeholder="Enter your first name" autofocus>
                   </div>
                   <div class="mb-3">
                     <label for="PhoneNumber" class="form-label">Phone Number <span style="color: red;">*</span></label>
-                    <input type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="Enter your phone number" autofocus>
+                    <input type="text" class="form-control" required="" id="PhoneNumber" name="PhoneNumber" placeholder="Enter your phone number" autofocus>
                   </div>
                   <div class="mb-3">
                     <label for="BirthDate" class="form-label">Birth Date <span style="color: red;">*</span></label>
-                    <input type="date" class="form-control" id="BirthDate" name="BirthDate" placeholder="Enter your birth date" autofocus>
+                    <input type="date" class="form-control" required="" id="BirthDate" name="BirthDate" placeholder="Enter your birth date" autofocus>
                   </div>
                   <div class="mb-3">
                     <label for="email" class="form-label">Email <span style="color: red;">*</span></label>
-                    <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email">
+                    <input type="text" class="form-control" required="" id="email" name="email" placeholder="Enter your email">
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label for="LastName" class="form-label">Last Name <span style="color: red;">*</span></label>
-                    <input type="text" class="form-control" id="LastName" name="LastName" placeholder="Enter your last name" autofocus>
+                    <input type="text" class="form-control" required="" id="LastName" name="LastName" placeholder="Enter your last name" autofocus>
                   </div>
                   <div class="mb-3">
                     <label for="username" class="form-label">Username <span style="color: red;">*</span></label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" autofocus>
+                    <input type="text" class="form-control" required="" id="username" name="username" placeholder="Enter your username" autofocus>
                   </div>
                   <div class="mb-3 form-password-toggle">
                     <label class="form-label" for="password">Password <span style="color: red;">*</span></label>
                     <div class="input-group input-group-merge">
-                      <input type="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password">
+                      <input type="password" id="password" class="form-control" required="" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password">
                       <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                     </div>
                   </div>
                   <div class="mb-3 form-password-toggle">
-                    <label class="form-label" for="c_password">Confirm password <span style="color: red;">*</span></label>
+                    <label class="form-label" for="c_password" >Confirm password <span style="color: red;">*</span></label>
                     <div class="input-group input-group-merge">
-                      <input type="password" id="c_password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password">
+                      <input type="password" id="c_password" required="" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password">
                       <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                     </div>
                   </div>
                 </div>
                 <div class="mb-3 col-md-6">
                   <label class="form-label" for="country">Nationality <span style="color: red;">*</span></label>
-                  <select id="country" name="country" class="form-select">
+                  <select id="country" name="country" class="form-select" required="">
                     <option value="#" selected>Select Your Nationality</option>
                     {% for country in countries %}
                       <option value="{{ country['country_id'] }}">{{ country['country_name'] }}</option>
@@ -115,12 +115,12 @@
                   </select>
                 </div>
                 <div class="mb-3 col-md-6">
-                  <label for="Address" class="form-label">Address <span style="color: red;">*</span></label>
-                  <input type="text" class="form-control" id="Address" name="Address" placeholder="Enter your Address">
+                  <label for="Address" class="form-label" >Address <span style="color: red;">*</span></label>
+                  <input type="text" class="form-control" required="" id="Address" name="Address" placeholder="Enter your Address">
                 </div>
                 <div class="mb-3">
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms">
+                    <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" required="">
                     <label class="form-check-label" for="terms-conditions">
                       I agree to <a href="javascript:void(0);" style="color: #783b64">privacy policy & terms</a> <span style="color: red;">*</span>
                     </label>
@@ -132,7 +132,7 @@
 
             <p class="text-center">
               <span>Already have an account?</span>
-              <a href="login" style="color: #A993FF;">
+              <a href="/signin" style="color: #A993FF;">
                 <span>Sign in instead</span>
               </a>
             </p>
@@ -169,33 +169,6 @@
       }
     }
 
-    function validateForm(event) {
-      event.preventDefault();
-      var form = document.getElementById('formRegister');
-      var requiredFields = ['FirstName', 'LastName', 'username', 'email', 'password', 'c_password', 'PhoneNumber', 'BirthDate', 'country', 'Address', 'terms-conditions'];
-      var missingFields = [];
-
-      requiredFields.forEach(function(field) {
-        var element = document.getElementById(field);
-        if (field === 'terms-conditions') {
-          if (!element.checked) {
-            missingFields.push(field);
-          }
-        } else if (!element.value) {
-          missingFields.push(field);
-        }
-      });
-
-      if (missingFields.length > 0) {
-        alert('Please fill out all required fields.');
-        return false;
-      }
-
-      form.submit();
-      return true;
-    }
-
-    document.getElementById('formRegister').addEventListener('submit', validateForm);
   </script>
 </body>
 
