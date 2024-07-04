@@ -19,7 +19,7 @@ def create_app():
     app.config['MYSQL_USER'] = 'root'
     app.config['MYSQL_PASSWORD'] = ''
     app.config['MYSQL_DB'] = 'LinkMe' 
-    app.config['UPLOAD_FOLDER'] = 'C:\\Users\\Yahya\\Desktop\\LinkMe\\app\\static\\users_pfp'
+    app.config['UPLOAD_FOLDER'] = 'C:/Users/Yahya/Desktop/LinkMe/app/blueprints/profile/static/uploads'
 
     mysql.init_app(app)
     app.mysql = mysql

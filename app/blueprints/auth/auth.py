@@ -8,7 +8,6 @@ import MySQLdb.cursors
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, static_folder='static', template_folder='templates')
 
-UPLOAD_FOLDER = 'C:\\Users\\Yahya\\Desktop\\LinkMe\\app\\static\\users_pfp'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 def get_countries():
@@ -25,14 +24,11 @@ def hash_password(password):
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hashed_password.decode('utf-8')
 
-# Modify your save_user_data function to hash passwords before saving
 def save_user_data(data, profile_pic_filename=None):
-    hashed_password = hash_password(data['password'])  # Hash the password
+    hashed_password = hash_password(data['password'])
     cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    if profile_pic_filename:
-        profile_pic_path = os.path.join(UPLOAD_FOLDER, profile_pic_filename)
-    else:
-        profile_pic_path = None
+    
+    profile_pic_path = f'uploads/{profile_pic_filename}' if profile_pic_filename else None
     
     cursor.execute('''
         INSERT INTO users (username, email, password, first_name, last_name, phone_number, birthdate, Address, nationality, profile_pic_path)
@@ -45,17 +41,13 @@ def user_exists(email):
     cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
     account = cursor.fetchone()
-    if account:
-        return True
-    return False
+    return bool(account)
 
 def username_exists(username):
     cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
     account = cursor.fetchone()
-    if account:
-        return True
-    return False
+    return bool(account)
 
 @auth_blueprint.route('/logout', methods=['GET'])
 def logout():
@@ -93,7 +85,7 @@ def signup():
             picture = form.picture.data
             if picture and allowed_file(picture.filename):
                 profile_pic_filename = secure_filename(picture.filename)
-                picture.save(os.path.join(UPLOAD_FOLDER, profile_pic_filename))
+                picture.save(os.path.join(current_app.config['UPLOAD_FOLDER'], profile_pic_filename))
             else:
                 flash("Invalid file type for profile picture. Allowed types are JPG and PNG.", 'danger')
                 return redirect(url_for('auth_blueprint.signup'))
@@ -108,7 +100,8 @@ def signup():
             'BirthDate': birthdate,
             'country': country,
             'Address': address,
-            'terms': terms
+            'terms': terms,
+            'profile_pic_path': f'uploads/{profile_pic_filename}' if profile_pic_filename else None
         }
 
         try:
