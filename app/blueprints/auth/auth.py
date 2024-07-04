@@ -1,4 +1,5 @@
 import os
+import bcrypt
 from flask import Flask, render_template, redirect, url_for, flash, session, current_app
 from flask import Blueprint
 from .forms import SignupForm, SigninForm
@@ -19,7 +20,14 @@ def get_countries():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def hash_password(password):
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed_password.decode('utf-8')
+
+# Modify your save_user_data function to hash passwords before saving
 def save_user_data(data, profile_pic_filename=None):
+    hashed_password = hash_password(data['password'])  # Hash the password
     cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     if profile_pic_filename:
         profile_pic_path = os.path.join(UPLOAD_FOLDER, profile_pic_filename)
@@ -29,7 +37,7 @@ def save_user_data(data, profile_pic_filename=None):
     cursor.execute('''
         INSERT INTO users (username, email, password, first_name, last_name, phone_number, birthdate, Address, nationality, profile_pic_path)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    ''', (data['username'], data['email'], data['password'], data['FirstName'], data['LastName'], data['PhoneNumber'], data['BirthDate'], data['Address'], data['country'], profile_pic_path))
+    ''', (data['username'], data['email'], hashed_password, data['FirstName'], data['LastName'], data['PhoneNumber'], data['BirthDate'], data['Address'], data['country'], profile_pic_path))
     
     current_app.mysql.connection.commit()
 
@@ -124,15 +132,16 @@ def signin():
         password = form.password.data
         
         cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM users WHERE email = %s AND password = %s', (email, password))
+        cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
         account = cursor.fetchone()
-        cursor.close()
 
-        if account:
+        if account and bcrypt.checkpw(password.encode('utf-8'), account['password'].encode('utf-8')):
             session['email'] = email
             session['username'] = account['username']
+            cursor.close()
             return redirect(url_for('profile_blueprint.profile'))
         
+        cursor.close()
         flash('Invalid email or password!', 'danger')
 
     return render_template('signin.html', form=form)
