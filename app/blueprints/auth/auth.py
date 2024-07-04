@@ -53,6 +53,7 @@ def username_exists(username):
 def logout():
     session.pop('email', None)
     session.pop('username', None)
+    session.pop('id',None)
     return redirect(url_for('auth_blueprint.signin'))
 
 @auth_blueprint.route('/', methods=['GET', 'POST'])

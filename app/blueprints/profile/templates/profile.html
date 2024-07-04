@@ -90,8 +90,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block">John Doe</span>
-                                                    <small class="text-muted">Participant</small>
+                                                    <span class="fw-semibold d-block">{{ user.first_name }} {{ user.last_name }}</span>
+                                                    <small class="text-muted">User</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -106,7 +106,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="/signin">
+                                        <a class="dropdown-item" href="/logout">
                                             <i class="bx bx-power-off me-2"></i>
                                             <span class="align-middle">Log Out</span>
                                         </a>
@@ -155,79 +155,86 @@
                                     <div class="card-body">
                                         <!-- Form Start -->
                                         <form id="formAccountSettings" method="POST" action="/profile">
-                                        <div class="row">
-                                            <div class="mb-3 col-md-6">
-                                                <label for="firstName" class="form-label">First Name</label>
-                                                <input class="form-control" type="text" id="firstName" name="firstName"
-                                                    value="{{ user.first_name }}" autofocus />
-                                            </div>
-                                            <div class="mb-3 col-md-6">
-                                                <label for="lastName" class="form-label">Last Name</label>
-                                                <input class="form-control" type="text" name="lastName" id="lastName"
-                                                    value="{{ user.last_name }}" />
-                                            </div>
-                                            <div class="mb-3 col-md-6">
-                                                <label for="email" class="form-label">E-mail</label>
-                                                <input class="form-control" type="text" id="email" name="email"
-                                                    value="{{ user.email }}" placeholder="john.doe@example.com" />
-                                            </div>
-                                            <div class="mb-3 col-md-6">
-                                                <label for="organization" class="form-label">Username</label>
-                                                <input type="text" class="form-control" id="organization" name="organization"
-                                                    value="{{ user.username }}" />
-                                            </div>
-                                            <div class="mb-3 col-md-6">
-                                                <label class="form-label" for="phoneNumber">Phone Number</label>
-                                                <div class="input-group input-group-merge">
-                                                    <input type="text" id="phoneNumber" name="phoneNumber" class="form-control"
-                                                        value="{{ user.phone_number }}" placeholder="06 66 66 66 66" />
+                                            <div class="row">
+                                                <div class="mb-3 col-md-6 fields">
+                                                    <label for="firstName" class="form-label">First Name</label>
+                                                    <input class="form-control" type="text" id="firstName" name="firstName"
+                                                        value="{{ user.first_name }}" autofocus />
                                                 </div>
-                                            </div>
-                                            <div class="mb-3 col-md-6 password-fields" hidden>
-                                                <label for="OldPassword" class="form-label">Old Password</label>
-                                                <input class="form-control" type="password" id="OldPassword" name="OldPassword" />
-                                            </div>
-
-                                            <div class="mb-3 col-md-6">
-                                                <label class="form-label" for="country">Country</label>
-                                                <select id="country" name="country" class="form-select">
-                                                    <option value="#" selected>Select Your Nationality</option>
-                                                    {% for country in countries %}
+                                                <div class="mb-3 col-md-6 fields">
+                                                    <label for="lastName" class="form-label">Last Name</label>
+                                                    <input class="form-control" type="text" name="lastName" id="lastName"
+                                                        value="{{ user.last_name }}" />
+                                                </div>
+                                                <div class="mb-3 col-md-6 fields">
+                                                    <label for="email" class="form-label">E-mail</label>
+                                                    <input class="form-control" type="text" id="email" name="email"
+                                                        value="{{ user.email }}" placeholder="john.doe@example.com" />
+                                                </div>
+                                                <div class="mb-3 col-md-6 fields">
+                                                    <label for="organization" class="form-label">Username</label>
+                                                    <input type="text" class="form-control" id="organization" name="organization"
+                                                        value="{{ user.username }}" />
+                                                </div>
+                                                <div class="mb-3 col-md-6 fields">
+                                                    <label class="form-label" for="phoneNumber">Phone Number</label>
+                                                    <div class="input-group input-group-merge">
+                                                        <input type="text" id="phoneNumber" name="phoneNumber" class="form-control"
+                                                            value="{{ user.phone_number }}" placeholder="06 66 66 66 66" />
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3 col-md-6 password-fields" hidden>
+                                                    <label for="OldPassword" class="form-label">Old Password</label>
+                                                    <input class="form-control" type="password" id="OldPassword" name="OldPassword" />
+                                                </div>
+                    
+                                                <div class="mb-3 col-md-6 fields">
+                                                    <label class="form-label" for="country">Country</label>
+                                                    <select id="country" name="country" class="form-select">
+                                                        <option value="#" selected>Select Your Nationality</option>
+                                                        {% for country in countries %}
                                                         <option value="{{ country['country_id'] }}"
                                                             {% if country['country_id'] == user['nationality'] %} selected {% endif %}>
                                                             {{ country['country_name'] }}
                                                         </option>
-                                                    {% endfor %}
-                                                </select>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                    
+                                                <div class="mb-3 col-md-6 password-fields" hidden>
+                                                    <label for="NewPassword" class="form-label">New Password</label>
+                                                    <input class="form-control" type="password" id="NewPassword" name="NewPassword" />
+                                                </div>
+                                                <div class="mb-3 col-md-6 fields">
+                                                    <label for="address" class="form-label">Address</label>
+                                                    <input class="form-control" type="text" id="address" name="address"
+                                                        value="{{ user.Address }}" />
+                                                </div>
+                    
+                                                <div class="mb-3 col-md-6 password-fields" hidden>
+                                                    <label for="ConfirmNewPassword" class="form-label">Confirm New Password</label>
+                                                    <input class="form-control" type="password" id="ConfirmNewPassword"
+                                                        name="ConfirmNewPassword" />
+                                                </div>
                                             </div>
-
-                                            <div class="mb-3 col-md-6 password-fields" hidden>
-                                                <label for="NewPassword" class="form-label">New Password</label>
-                                                <input class="form-control" type="password" id="NewPassword" name="NewPassword" />
-                                            </div> 
-                                            <div class="mb-3 col-md-6" >
-                                                <label for="address" class="form-label">Address</label>
-                                                <input class="form-control" type="text" id="address" name="address"
-                                                    value="{{ user.Address }}" />
+                    
+                                            <div class="col-md-12 fields">
+                                                <button id="SaveChanges" type="submit" class="btn btn-primary me-2"
+                                                    style="background-color: #A993FF; border: #f8020b;">Save changes</button>
+                                                    <a href="#" id="changePasswordLink" class="btn btn-link">Change Password</a>
                                             </div>
-                                                    
-                                                    <div class="mb-3 col-md-6 password-fields" hidden>
-                                                        <label for="ConfirmNewPassword" class="form-label">Confirm New Password</label>
-                                                        <input class="form-control" type="password" id="ConfirmNewPassword" name="ConfirmNewPassword" />
-                                                    </div>
-                                        </div>
-
-                                                    <div class="col-md-12">
-                                                        <button type="submit" class="btn btn-primary me-2"
-                                                            style="background-color: #A993FF; border: #f8020b;">Save
-                                                            changes</button>
-                                                        <button type="reset" class="btn btn-outline-secondary">Cancel</button>
-                                                        <a href="#" id="changePasswordLink" class="btn btn-link">Change Password</a>
-                                                    </div>
-
+                    
+                                            <div class="col-md-12 password-fields" hidden>
+                                                <button id="savePassword" type="submit" class="btn btn-primary me-2"
+                                                    style="background-color: #A993FF; border: #f8020b;">Save new password</button>
+                                                <button type="reset" class="btn btn-outline-secondary">Cancel</button>
+                                            </div>
+                    
+                                            
+                    
                                             <!-- /Account -->
-                                        
-                                    </form>
+                    
+                                        </form>
                                         <!-- Form End -->
                                     </div>
                                     <!-- /Account -->
@@ -235,6 +242,31 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const changePasswordLink = document.getElementById('changePasswordLink');
+                            const passwordFields = document.querySelectorAll('.password-fields');
+                            const fields = document.querySelectorAll('.fields');
+                            const cancelButton = document.querySelector('button[type="reset"]');
+                            const savePassword = document.getElementById('savePassword');
+                            const saveChanges = document.getElementById('SaveChanges');
+                    
+                            changePasswordLink.addEventListener('click', function (event) {
+                                event.preventDefault();
+                                passwordFields.forEach(field => field.hidden = false);
+                                fields.forEach(field => field.hidden = true);
+                                changePasswordLink.hidden = true;
+                            });
+                    
+                            cancelButton.addEventListener('click', function () {
+                                passwordFields.forEach(field => field.hidden = true);
+                                fields.forEach(field => field.hidden = false);
+                                changePasswordLink.hidden = false;
+                            });
+                        });
+                    </script>
+                    
                     <!-- / Content -->
                     <div class="content-backdrop fade"></div>
                 </div>
@@ -411,24 +443,7 @@
                         </div>
                     </div>
                 </footer>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        const changePasswordLink = document.getElementById('changePasswordLink');
-                        const passwordFields = document.querySelectorAll('.password-fields');
-                        const cancelButton = document.querySelector('button[type="reset"]');
-                    
-                        changePasswordLink.addEventListener('click', function (event) {
-                            event.preventDefault();
-                            passwordFields.forEach(field => field.hidden = false);
-                            changePasswordLink.hidden = true;
-                        });
-                    
-                        cancelButton.addEventListener('click', function () {
-                            passwordFields.forEach(field => field.hidden = true);
-                            changePasswordLink.hidden = false;
-                        });
-                    });
-                    </script>
+                
                     
                 <script src="{{ url_for('static', filename='vendor/libs/jquery/jquery.js') }}"></script>
     
