@@ -91,7 +91,7 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <span class="fw-semibold d-block">{{ user.first_name }} {{ user.last_name }}</span>
-                                                    <small class="text-muted">User</small>
+                                                    <small class="text-muted">{% for country in countries %}{% if country['country_id'] == user['nationality'] %} {{ country['country_name'] }} {% endif %}{% endfor %}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -141,7 +141,7 @@
 
                                                 <div class="button-wrapper">
                                                     <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0"
-                                                           style="background-color: #A993FF; border: #f8020b;">
+                                                            style="background-color: #A993FF; border: #f8020b;">
                                                         <span class="d-none d-sm-block">Upload new photo</span>
                                                         <i class="bx bx-upload d-block d-sm-none"></i>
                                                         <input type="file" id="upload" name="profile_pic" class="account-file-input" hidden accept="image/png, image/jpeg" onchange="showPreview(event)" />
@@ -185,10 +185,7 @@
                                                                    value="{{ user.phone_number }}" placeholder="06 66 66 66 66" />
                                                         </div>
                                                     </div>
-                                                    <div class="mb-3 col-md-6 password-fields" hidden>
-                                                        <label for="OldPassword" class="form-label">Old Password</label>
-                                                        <input class="form-control" type="password" id="OldPassword" name="OldPassword" />
-                                                    </div>
+                                                    
                     
                                                     <div class="mb-3 col-md-6 fields">
                                                         <label class="form-label" for="country">Country</label>
@@ -203,36 +200,41 @@
                                                         </select>
                                                     </div>
                     
-                                                    <div class="mb-3 col-md-6 password-fields" hidden>
-                                                        <label for="NewPassword" class="form-label">New Password</label>
-                                                        <input class="form-control" type="password" id="NewPassword" name="NewPassword" />
-                                                    </div>
+                                                    
                                                     <div class="mb-3 col-md-6 fields">
                                                         <label for="address" class="form-label">Address</label>
                                                         <input class="form-control" type="text" id="address" name="address"
-                                                               value="{{ user.Address }}" />
+                                                            value="{{ user.Address }}" />
                                                     </div>
-                    
-                                                    <div class="mb-3 col-md-6 password-fields" hidden>
-                                                        <label for="ConfirmNewPassword" class="form-label">Confirm New Password</label>
-                                                        <input class="form-control" type="password" id="ConfirmNewPassword"
-                                                               name="ConfirmNewPassword" />
-                                                    </div>
-                                                </div>
-                    
-                                                <div class="col-md-12 fields">
+
+                                                    <div class="col-md-12 fields">
                                                     <button id="SaveChanges" type="submit" class="btn btn-primary me-2"
                                                             style="background-color: #A993FF; border: #f8020b;">Save changes</button>
                                                     <a href="#" id="changePasswordLink" class="btn btn-link">Change Password</a>
                                                 </div>
-                    
-                                                <div class="col-md-12 password-fields" hidden>
-                                                    <button id="savePassword" type="submit" class="btn btn-primary me-2"
-                                                            style="background-color: #A993FF; border: #f8020b;">Save new password</button>
-                                                    <button type="reset" class="btn btn-outline-secondary">Cancel</button>
-                                                </div>
+                                            </form>
+                                                <div id="changePassword" hidden>
+                                                    <form id="formChangePassword" method="POST" action="{{ url_for('profile_blueprint.change_password') }}">
+                                                        <div class="mb-3 col-md-6 password-fields">
+                                                            <label for="OldPassword" class="form-label">Old Password</label>
+                                                            <input class="form-control" type="password" id="OldPassword" name="OldPassword" required>
+                                                        </div>
+                                                        <div class="mb-3 col-md-6 password-fields">
+                                                            <label for="NewPassword" class="form-label">New Password</label>
+                                                            <input class="form-control" type="password" id="NewPassword" name="NewPassword" required>
+                                                        </div>
+                                                        <div class="mb-3 col-md-6 password-fields">
+                                                            <label for="ConfirmNewPassword" class="form-label">Confirm New Password</label>
+                                                            <input class="form-control" type="password" id="ConfirmNewPassword" name="ConfirmNewPassword" required>
+                                                        </div>
+                                                        <div class="col-md-12 password-fields">
+                                                            <button id="savePassword" type="submit" class="btn btn-primary me-2">Save new password</button>
+                                                            <button type="reset" class="btn btn-outline-secondary">Cancel</button>
+                                                        </div>
+                                                    </form>
+                                        </div>
                                             </div>
-                                        </form>
+                                        
                                         <!-- Form End -->
                                     </div>
                                     <!-- /Account -->
@@ -244,7 +246,7 @@
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
                             const changePasswordLink = document.getElementById('changePasswordLink');
-                            const passwordFields = document.querySelectorAll('.password-fields');
+                            const changePassword = document.getElementById('changePassword');
                             const fields = document.querySelectorAll('.fields');
                             const cancelButton = document.querySelector('button[type="reset"]');
                             const savePassword = document.getElementById('savePassword');
@@ -252,13 +254,13 @@
                     
                             changePasswordLink.addEventListener('click', function (event) {
                                 event.preventDefault();
-                                passwordFields.forEach(field => field.hidden = false);
+                                changePassword.hidden = false;
                                 fields.forEach(field => field.hidden = true);
                                 changePasswordLink.hidden = true;
                             });
                     
                             cancelButton.addEventListener('click', function () {
-                                passwordFields.forEach(field => field.hidden = true);
+                                changePassword.hidden = true;
                                 fields.forEach(field => field.hidden = false);
                                 changePasswordLink.hidden = false;
                             });

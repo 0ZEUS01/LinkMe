@@ -141,3 +141,37 @@ def profile():
             return redirect(url_for('auth_blueprint.signin'))
     else:
         return redirect(url_for('auth_blueprint.signin'))
+
+@profile_blueprint.route('/profile/changePassword', methods=['POST'])
+def change_password():
+    if 'id' in session:
+        user_id = session['id']
+        old_password = request.form.get('OldPassword')
+        new_password = request.form.get('NewPassword')
+        confirm_new_password = request.form.get('ConfirmNewPassword')
+
+        if new_password != confirm_new_password:
+            flash('New password and confirmation do not match!', 'danger')
+            return redirect(url_for('.profile'))
+
+        cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT password FROM users WHERE id = %s', (user_id,))
+        user = cursor.fetchone()
+
+        if user and check_password(user['password'], old_password):
+            hashed_new_password = hash_password(new_password)
+            try:
+                cursor.execute('UPDATE users SET password = %s WHERE id = %s', (hashed_new_password, user_id))
+                current_app.mysql.connection.commit()
+                flash('Password updated successfully!', 'success')
+            except Exception as e:
+                current_app.logger.error(f"Error updating password: {e}")
+                flash('An error occurred while updating the password.', 'danger')
+            finally:
+                cursor.close()
+        else:
+            flash('Old password is incorrect!', 'danger')
+
+        return redirect(url_for('.profile'))
+    else:
+        return redirect(url_for('auth_blueprint.signin'))
