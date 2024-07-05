@@ -75,7 +75,7 @@
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="{{ url_for('static', filename='img/avatars/1.png') }}" alt
+                                        <img src="{{ url_for('profile_blueprint.static', filename=user['profile_pic_path']) if user['profile_pic_path'] else url_for('static', filename='img/avatars/1.png') }}" alt
                                             class="w-px-40 h-auto rounded-circle" />
                                     </div>
                                 </a>
@@ -85,7 +85,7 @@
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
-                                                        <img src="{{ url_for('static', filename='img/avatars/1.png') }}" alt
+                                                        <img src="{{ url_for('profile_blueprint.static', filename=user['profile_pic_path']) if user['profile_pic_path'] else url_for('static', filename='img/avatars/1.png') }}" alt
                                                             class="w-px-40 h-auto rounded-circle" />
                                                     </div>
                                                 </div>
@@ -100,7 +100,7 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="../participant_profile.html">
+                                        <a class="dropdown-item" href="/profile">
                                             <i class="bx bx-user me-2"></i>
                                             <span class="align-middle">My Profile</span>
                                         </a>
@@ -133,107 +133,105 @@
                                     <h5 class="card-header">Profile Details</h5>
                                     <!-- Account -->
                                     <div class="card-body">
-                                        <div class="d-flex align-items-start align-items-sm-center gap-4">
-                                            <img src="{{ url_for('static', filename=user['profile_pic_path']) if user['profile_pic_path'] else url_for('static', filename='img/avatars/1.png') }}"
-                                                alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
-                                            <div class="button-wrapper">
-                                                <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0"
-                                                    style="background-color: #A993FF; border: #f8020b;">
-                                                    <span class="d-none d-sm-block">Upload new photo</span>
-                                                    <i class="bx bx-upload d-block d-sm-none"></i>
-                                                    <input type="file" id="upload" class="account-file-input" hidden accept="image/png, image/jpeg" />
-                                                </label>
-                                                <button type="button" class="btn btn-outline-secondary account-image-reset mb-4">
-                                                    <i class="bx bx-reset d-block d-sm-none"></i>
-                                                    <span class="d-none d-sm-block">Reset</span>
-                                                </button>
-                                                <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr class="my-0" />
-                                    <div class="card-body">
                                         <!-- Form Start -->
-                                        <form id="formAccountSettings" method="POST" action="/profile">
-                                            <div class="row">
-                                                <div class="mb-3 col-md-6 fields">
-                                                    <label for="firstName" class="form-label">First Name</label>
-                                                    <input class="form-control" type="text" id="firstName" name="firstName"
-                                                        value="{{ user.first_name }}" autofocus />
+                                        <form id="formAccountSettings" method="POST" action="/profile/profile" enctype="multipart/form-data">
+                                            <div class="d-flex align-items-start align-items-sm-center gap-4">
+                                                <img src="{{ url_for('profile_blueprint.static', filename=user['profile_pic_path']) if user['profile_pic_path'] else url_for('static', filename='img/avatars/1.png') }}"
+                                                        alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+
+                                                <div class="button-wrapper">
+                                                    <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0"
+                                                           style="background-color: #A993FF; border: #f8020b;">
+                                                        <span class="d-none d-sm-block">Upload new photo</span>
+                                                        <i class="bx bx-upload d-block d-sm-none"></i>
+                                                        <input type="file" id="upload" name="profile_pic" class="account-file-input" hidden accept="image/png, image/jpeg" onchange="showPreview(event)" />
+                                                    </label>
+                                                    <button type="button" id="resetButton" class="btn btn-outline-secondary account-image-reset mb-4">
+                                                        <i class="bx bx-reset d-block d-sm-none"></i>
+                                                        <span class="d-none d-sm-block">Reset</span>
+                                                    </button>
+                                                    <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
+                                                    <input type="hidden" name="original_profile_pic" value="{{ user['profile_pic_path'] }}">
                                                 </div>
-                                                <div class="mb-3 col-md-6 fields">
-                                                    <label for="lastName" class="form-label">Last Name</label>
-                                                    <input class="form-control" type="text" name="lastName" id="lastName"
-                                                        value="{{ user.last_name }}" />
-                                                </div>
-                                                <div class="mb-3 col-md-6 fields">
-                                                    <label for="email" class="form-label">E-mail</label>
-                                                    <input class="form-control" type="text" id="email" name="email"
-                                                        value="{{ user.email }}" placeholder="john.doe@example.com" />
-                                                </div>
-                                                <div class="mb-3 col-md-6 fields">
-                                                    <label for="organization" class="form-label">Username</label>
-                                                    <input type="text" class="form-control" id="organization" name="organization"
-                                                        value="{{ user.username }}" />
-                                                </div>
-                                                <div class="mb-3 col-md-6 fields">
-                                                    <label class="form-label" for="phoneNumber">Phone Number</label>
-                                                    <div class="input-group input-group-merge">
-                                                        <input type="text" id="phoneNumber" name="phoneNumber" class="form-control"
-                                                            value="{{ user.phone_number }}" placeholder="06 66 66 66 66" />
+                                            </div>
+                    
+                                            <hr class="my-0" />
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="mb-3 col-md-6 fields">
+                                                        <label for="firstName" class="form-label">First Name</label>
+                                                        <input class="form-control" type="text" id="firstName" name="firstName"
+                                                               value="{{ user.first_name }}" autofocus />
+                                                    </div>
+                                                    <div class="mb-3 col-md-6 fields">
+                                                        <label for="lastName" class="form-label">Last Name</label>
+                                                        <input class="form-control" type="text" name="lastName" id="lastName"
+                                                               value="{{ user.last_name }}" />
+                                                    </div>
+                                                    <div class="mb-3 col-md-6 fields">
+                                                        <label for="email" class="form-label">E-mail</label>
+                                                        <input class="form-control" type="text" id="email" name="email"
+                                                               value="{{ user.email }}" placeholder="john.doe@example.com" />
+                                                    </div>
+                                                    <div class="mb-3 col-md-6 fields">
+                                                        <label for="Username" class="form-label">Username</label>
+                                                        <input type="text" class="form-control" id="Username" name="Username"
+                                                               value="{{ user.username }}" />
+                                                    </div>
+                                                    <div class="mb-3 col-md-6 fields">
+                                                        <label class="form-label" for="phoneNumber">Phone Number</label>
+                                                        <div class="input-group input-group-merge">
+                                                            <input type="text" id="phoneNumber" name="phoneNumber" class="form-control"
+                                                                   value="{{ user.phone_number }}" placeholder="06 66 66 66 66" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 col-md-6 password-fields" hidden>
+                                                        <label for="OldPassword" class="form-label">Old Password</label>
+                                                        <input class="form-control" type="password" id="OldPassword" name="OldPassword" />
+                                                    </div>
+                    
+                                                    <div class="mb-3 col-md-6 fields">
+                                                        <label class="form-label" for="country">Country</label>
+                                                        <select id="country" name="country" class="form-select">
+                                                            <option value="#" selected>Select Your Nationality</option>
+                                                            {% for country in countries %}
+                                                            <option value="{{ country['country_id'] }}"
+                                                                {% if country['country_id'] == user['nationality'] %} selected {% endif %}>
+                                                                {{ country['country_name'] }}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                    
+                                                    <div class="mb-3 col-md-6 password-fields" hidden>
+                                                        <label for="NewPassword" class="form-label">New Password</label>
+                                                        <input class="form-control" type="password" id="NewPassword" name="NewPassword" />
+                                                    </div>
+                                                    <div class="mb-3 col-md-6 fields">
+                                                        <label for="address" class="form-label">Address</label>
+                                                        <input class="form-control" type="text" id="address" name="address"
+                                                               value="{{ user.Address }}" />
+                                                    </div>
+                    
+                                                    <div class="mb-3 col-md-6 password-fields" hidden>
+                                                        <label for="ConfirmNewPassword" class="form-label">Confirm New Password</label>
+                                                        <input class="form-control" type="password" id="ConfirmNewPassword"
+                                                               name="ConfirmNewPassword" />
                                                     </div>
                                                 </div>
-                                                <div class="mb-3 col-md-6 password-fields" hidden>
-                                                    <label for="OldPassword" class="form-label">Old Password</label>
-                                                    <input class="form-control" type="password" id="OldPassword" name="OldPassword" />
-                                                </div>
                     
-                                                <div class="mb-3 col-md-6 fields">
-                                                    <label class="form-label" for="country">Country</label>
-                                                    <select id="country" name="country" class="form-select">
-                                                        <option value="#" selected>Select Your Nationality</option>
-                                                        {% for country in countries %}
-                                                        <option value="{{ country['country_id'] }}"
-                                                            {% if country['country_id'] == user['nationality'] %} selected {% endif %}>
-                                                            {{ country['country_name'] }}
-                                                        </option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                    
-                                                <div class="mb-3 col-md-6 password-fields" hidden>
-                                                    <label for="NewPassword" class="form-label">New Password</label>
-                                                    <input class="form-control" type="password" id="NewPassword" name="NewPassword" />
-                                                </div>
-                                                <div class="mb-3 col-md-6 fields">
-                                                    <label for="address" class="form-label">Address</label>
-                                                    <input class="form-control" type="text" id="address" name="address"
-                                                        value="{{ user.Address }}" />
-                                                </div>
-                    
-                                                <div class="mb-3 col-md-6 password-fields" hidden>
-                                                    <label for="ConfirmNewPassword" class="form-label">Confirm New Password</label>
-                                                    <input class="form-control" type="password" id="ConfirmNewPassword"
-                                                        name="ConfirmNewPassword" />
-                                                </div>
-                                            </div>
-                    
-                                            <div class="col-md-12 fields">
-                                                <button id="SaveChanges" type="submit" class="btn btn-primary me-2"
-                                                    style="background-color: #A993FF; border: #f8020b;">Save changes</button>
+                                                <div class="col-md-12 fields">
+                                                    <button id="SaveChanges" type="submit" class="btn btn-primary me-2"
+                                                            style="background-color: #A993FF; border: #f8020b;">Save changes</button>
                                                     <a href="#" id="changePasswordLink" class="btn btn-link">Change Password</a>
+                                                </div>
+                    
+                                                <div class="col-md-12 password-fields" hidden>
+                                                    <button id="savePassword" type="submit" class="btn btn-primary me-2"
+                                                            style="background-color: #A993FF; border: #f8020b;">Save new password</button>
+                                                    <button type="reset" class="btn btn-outline-secondary">Cancel</button>
+                                                </div>
                                             </div>
-                    
-                                            <div class="col-md-12 password-fields" hidden>
-                                                <button id="savePassword" type="submit" class="btn btn-primary me-2"
-                                                    style="background-color: #A993FF; border: #f8020b;">Save new password</button>
-                                                <button type="reset" class="btn btn-outline-secondary">Cancel</button>
-                                            </div>
-                    
-                                            
-                    
-                                            <!-- /Account -->
-                    
                                         </form>
                                         <!-- Form End -->
                                     </div>
@@ -265,6 +263,21 @@
                                 changePasswordLink.hidden = false;
                             });
                         });
+                    
+                        document.getElementById('resetButton').addEventListener('click', function() {
+                            const originalPicPath = '{{ url_for('static', filename=user['profile_pic_path']) if user['profile_pic_path'] else url_for('static', filename='img/avatars/1.png') }}';
+                            document.getElementById('uploadedAvatar').src = originalPicPath;
+                            document.getElementById('upload').value = '';
+                        });
+                    
+                        function showPreview(event) {
+                            const [file] = event.target.files;
+                            if (file) {
+                                const preview = document.getElementById('uploadedAvatar');
+                                preview.src = URL.createObjectURL(file);
+                                preview.onload = () => URL.revokeObjectURL(preview.src);
+                            }
+                        }
                     </script>
                     
                     <!-- / Content -->

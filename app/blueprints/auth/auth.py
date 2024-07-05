@@ -36,26 +36,6 @@ def save_user_data(data, profile_pic_filename=None):
     ''', (data['username'], data['email'], hashed_password, data['FirstName'], data['LastName'], data['PhoneNumber'], data['BirthDate'], data['Address'], data['country'], profile_pic_path))
     
     current_app.mysql.connection.commit()
-
-def user_exists(email):
-    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
-    account = cursor.fetchone()
-    return bool(account)
-
-def username_exists(username):
-    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
-    account = cursor.fetchone()
-    return bool(account)
-
-@auth_blueprint.route('/logout', methods=['GET'])
-def logout():
-    session.pop('email', None)
-    session.pop('username', None)
-    session.pop('id',None)
-    return redirect(url_for('auth_blueprint.signin'))
-
 @auth_blueprint.route('/', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
@@ -117,6 +97,26 @@ def signup():
         print(form.errors)  # Debug: Print form errors if validation fails
 
     return render_template('signup.html', form=form, countries=countries)
+
+def user_exists(email):
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+    account = cursor.fetchone()
+    return bool(account)
+
+def username_exists(username):
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
+    account = cursor.fetchone()
+    return bool(account)
+
+@auth_blueprint.route('/logout', methods=['GET'])
+def logout():
+    session.pop('email', None)
+    session.pop('username', None)
+    session.pop('id',None)
+    return redirect(url_for('auth_blueprint.signin'))
+
 
 @auth_blueprint.route('/signin', methods=['GET', 'POST'])
 def signin():
