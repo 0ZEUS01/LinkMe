@@ -241,3 +241,80 @@ def edit_delete_experience():
 
     cursor.close()
     return redirect(url_for('profile_blueprint.experiences'))
+
+@profile_blueprint.route('/skills', methods=['GET'])
+def skills():
+    if 'id' not in session:
+        return redirect(url_for('auth_blueprint.signin'))
+    
+    user_id = session['id']
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    
+    cursor.execute('''
+        SELECT us.skill_id, s.skill_name
+        FROM user_skills us
+        JOIN skills s ON us.skill_id = s.skill_id
+        WHERE us.id = %s
+    ''', (user_id,))
+    user_skills = cursor.fetchall()
+    cursor.close()
+
+    return render_template('skill.html', skills=user_skills)
+
+@profile_blueprint.route('/add_skill', methods=['POST'])
+def add_skill():
+    if 'id' not in session:
+        return redirect(url_for('auth_blueprint.signin'))
+
+    user_id = session['id']
+    new_skill_name = request.form.get('newSkill')
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    
+    cursor.execute('SELECT skill_id FROM skills WHERE skill_name = %s', (new_skill_name,))
+    skill = cursor.fetchone()
+    
+    if skill:
+        skill_id = skill['skill_id']
+    else:
+        cursor.execute('INSERT INTO skills (skill_name) VALUES (%s)', (new_skill_name,))
+        current_app.mysql.connection.commit()
+        skill_id = cursor.lastrowid
+    
+    cursor.execute('INSERT INTO user_skills (id, skill_id) VALUES (%s, %s)', (user_id, skill_id))
+    current_app.mysql.connection.commit()
+    cursor.close()
+    flash('Skill added successfully!', 'success')
+    
+    return redirect(url_for('profile_blueprint.skills'))
+
+@profile_blueprint.route('/suggest_skills', methods=['GET'])
+def suggest_skills():
+    query = request.args.get('query', '')
+    if query:
+        cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT skill_name FROM skills WHERE skill_name LIKE %s', ('%' + query + '%',))
+        skills = cursor.fetchall()
+        cursor.close()
+
+        suggestions = ''.join([f"<div class='suggestion'>{skill['skill_name']}</div>" for skill in skills])
+        return suggestions
+    return ''
+
+
+@profile_blueprint.route('/delete_skill', methods=['POST'])
+def delete_skill():
+    if 'id' not in session:
+        return redirect(url_for('auth_blueprint.signin'))
+
+    user_id = session['id']
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    skill_id = request.form.get('skill_id')
+
+    if 'delete_skill' in request.form:
+        cursor.execute('DELETE FROM user_skills WHERE id=%s AND skill_id=%s', (user_id, skill_id))
+        current_app.mysql.connection.commit()
+        flash('Skill deleted successfully!', 'success')
+
+    cursor.close()
+    return redirect(url_for('profile_blueprint.skills'))

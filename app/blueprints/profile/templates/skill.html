@@ -13,7 +13,21 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/icons/linkme.png') }}" />
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #skillSuggestions {
+            border: 1px solid #ccc;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        .suggestion {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .suggestion:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -100,19 +114,19 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="/profile">
+                                        <a class="dropdown-item" href="/profile/profile">
                                             <i class="bx bx-user me-2"></i>
                                             <span class="align-middle">My Profile</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="/experiences">
+                                        <a class="dropdown-item" href="/profile/experiences">
                                             <i class="bx bx-award me-2"></i>
                                             <span class="align-middle">My Experiences</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="/profile">
+                                        <a class="dropdown-item" href="/profile/skills">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stars me-2" viewBox="0 0 19 16">
                                                 <path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.73 1.73 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.73 1.73 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.73 1.73 0 0 0 3.407 2.31zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z"/>
                                             </svg>
@@ -131,137 +145,87 @@
                         </ul>
                     </div>
                 </nav>
-
-                <div class="content-wrapper" >
+                <div class="content-wrapper">
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card mb-4">
-                                    <h5 class="card-header">Experiences</h5>
-                                    <!-- Account -->
+                                    <h5 class="card-header">Your Skills</h5> 
                                     <div class="card-body">
-                                        <form id="formExperience" method="POST" action="{{ url_for('profile_blueprint.experiences') }}">
-                                            {% for experience in experiences %}
-                                            <div class="row" style="margin-bottom:5px">
-                                                <input type="hidden" name="experience_id" value="{{ experience.experience_id }}">
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="ExperienceTitle" class="form-label">Experience Title</label>
-                                                    <input class="form-control" type="text" id="ExperienceTitleShow" name="ExperienceTitleShow" value="{{ experience.title }}" autofocus>
+                                        <form id="formEditDeleteSkills" method="POST" action="{{ url_for('profile_blueprint.delete_skill') }}">
+                                            <div class="row">
+                                                {% if skills %}
+                                                {% for skill in skills %}
+                                                <div class="mb-3 col-md-8">
+                                                    <input type="hidden" name="skill_id" value="{{ skill.skill_id }}">
+                                                    <input class="form-control" type="text" id="skill" name="skill" value="{{ skill.skill_name }}" readonly />
                                                 </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="Description" class="form-label">Description</label>
-                                                    <input class="form-control" type="text" name="DescriptionShow" id="DescriptionShow" value="{{ experience.description }}" autofocus>
+                                                <div class="mb-3 col-md-4">
+                                                    <button type="submit" name="delete_skill" class="btn btn-danger me-2">Delete</button>
                                                 </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="startDate" class="form-label">Start Date</label>
-                                                    <input type="date" class="form-control" id="startDateShow" name="startDateShow" value="{{ experience.start_date }}" autofocus>
-                                                </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="endDate" class="form-label">End Date</label>
-                                                    <input type="date" class="form-control" id="endDateShow" name="endDateShow" value="{{ experience.end_date }}" autofocus>
-                                                </div>
-                                                <div class="mb-3 col-md-2">
-                                                    <button type="submit" name="edit_experience" class="btn btn-primary me-2" style="background-color: #A993FF; border: #f8020b;">Edit</button>
-                                                    <button type="submit" name="delete_experience" class="btn btn-danger me-2">Delete</button>
-                                                </div>
-                                            </div>
-                                            {% endfor %}
-                                            <hr class="my-3">
-                                            <div class="row" style="margin-top:20px">
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="ExperienceTitle" class="form-label">Experience Title</label>
-                                                    <input class="form-control" type="text" id="ExperienceTitle" name="ExperienceTitle" placeholder="Enter your Experience" autofocus >
-                                                </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="Description" class="form-label">Description</label>
-                                                    <input class="form-control" type="text" name="Description" id="Description" placeholder="Enter your Experience Description" autofocus >
-                                                </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="startDate" class="form-label">Start Date</label>
-                                                    <input type="date" class="form-control" id="startDate" name="startDate" autofocus >
-                                                </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="endDate" class="form-label">End Date</label>
-                                                    <input type="date" class="form-control" id="endDate" name="endDate" autofocus >
-                                                </div>
-                                            </div>
-                                            <div class="mt-2">
-                                                <button type="submit" name="add_experience" class="btn btn-primary me-2" style="background-color: #A993FF; border: #f8020b;">Add new Experience</button>
+                                                {% endfor %}
+                                                {% else %}
+                                                <p>You have no Skills registered yet. Feel free to add new ones below.</p>
+                                                {% endif %}
                                             </div>
                                         </form>
                                     </div>
-                                    <!-- /Account -->
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- / Content -->
-                    <div class="content-backdrop fade"></div>
                 </div>
                 
-
-
-<div class="content-wrapper" style="margin-top: -48px;">
-    <!-- Content -->
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card mb-4">
-                    <h5 class="card-header">Skills</h5> 
-                    <!-- Account -->
-                    <div class="card-body">
-                        <form id="formAccountSettings" method="POST" onsubmit="return false">
-                            <div class="row">
-                                <div class="mb-3 col-md-8">
-                                    
-                                    <input class="form-control" type="text" id="firstName"
-                                        name="firstName" value="Java" autofocus />
-                                </div>
-                                <div class="mb-3 col-md-4">
-                                    <button type="submit" class="btn btn-primary me-2"
-                                        style="background-color: #A993FF; border: #f8020b;">Edit</button>
-                                    <button type="submit" class="btn  me-2 btn-danger">Delete</button>
-                                
-                                </div>
-                                <div class="mb-3 col-md-8">
-                                    
-                                    <input class="form-control" type="text" id="firstName"
-                                        name="firstName" value="PHP" autofocus />
-                                </div>
-                                <div class="mb-3 col-md-4">
-                                    <button type="submit" class="btn btn-primary me-2"
-                                        style="background-color: #A993FF; border: #f8020b;">Edit</button>
-                                    <button type="submit" class="btn  me-2 btn-danger">Delete</button>
-                                
-                                </div>
-                                <div class="mb-3 col-md-8">
-                                    
-                                    <input class="form-control" type="text" id="firstName"
-                                        name="firstName" value="Python" autofocus />
-                                </div>
-                                <div class="mb-3 col-md-4">
-                                    <button type="submit" class="btn btn-primary me-2"
-                                        style="background-color: #A993FF; border: #f8020b;">Edit</button>
-                                    <button type="submit" class="btn  me-2 btn-danger">Delete</button>
-                                
+                <div class="content-wrapper" style="margin-top: -250px;">
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card mb-4">
+                                    <h5 class="card-header">Add new Skill</h5> 
+                                    <div class="card-body">
+                                        <form id="formAddSkill" method="POST" action="{{ url_for('profile_blueprint.add_skill') }}">
+                                            <div class="row">
+                                                <div class="mb-3 col-md-8">
+                                                    <input class="form-control" type="text" id="newSkill" name="newSkill" placeholder="Add your Skill (ex: Java)" autofocus required />
+                                                    <div id="skillSuggestions"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <button type="submit" class="btn btn-primary me-2" style="background-color: #A993FF; border: #f8020b;">Add new Skill</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mt-2">
-                                <button type="submit" class="btn btn-primary me-2"
-                                    style="background-color: #A993FF; border: #f8020b;">Add new Skill</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
-                    <!-- /Account -->
                 </div>
-            </div>
-        </div>
-    </div>
-    <!-- / Content -->
-    <div class="content-backdrop fade"></div>
-</div>
+                
+                <script>
+                    $(document).ready(function() {
+                        $('#newSkill').on('input', function() {
+                            let query = $(this).val();
+                            if (query.length > 0) {
+                                $.ajax({
+                                    url: "{{ url_for('profile_blueprint.suggest_skills') }}",
+                                    method: "GET",
+                                    data: { query: query },
+                                    success: function(data) {
+                                        $('#skillSuggestions').html(data);
+                                    }
+                                });
+                            } else {
+                                $('#skillSuggestions').html('');
+                            }
+                        });
+                
+                        $(document).on('click', '.suggestion', function() {
+                            $('#newSkill').val($(this).text());
+                            $('#skillSuggestions').html('');
+                        });
+                    });
+                </script>
 
-                <!-- Footer -->
                 <footer class="content-footer footer bg-footer-theme">
                     <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
                         <div class="mb-2 mb-md-0">
