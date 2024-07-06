@@ -1,180 +1,83 @@
-from flask import Blueprint, render_template, current_app, session, redirect, url_for, request
-import MySQLdb.cursors
-import pandas as pd
+import MySQLdb
+import logging
+from flask import Blueprint, render_template, session, redirect, url_for, flash
+from app import mysql
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import pandas as pd
 
-# Assuming your data is loaded and vectorized globally
-data = pd.read_excel('Job opportunities.xlsx')
+job_blueprint = Blueprint('job', __name__, template_folder='templates')
 
-# Global variables for user skills and recommended jobs
-user_skills = ''
-recommended_jobs = pd.DataFrame()  # Initialize as an empty DataFrame
-vectorizer = TfidfVectorizer()
-top_n_indices=[]
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
 
+def get_user_skills(user_id):
+    try:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        query = """
+            SELECT s.skill_name
+            FROM user_skills us
+            JOIN skills s ON us.skill_id = s.skill_id
+            WHERE us.id = %s
+        """
+        cursor.execute(query, (user_id,))
+        skills = cursor.fetchall()
+        cursor.close()
+        return " ".join(skill['skill_name'] for skill in skills)
+    except Exception as e:
+        logging.error(f"Error fetching user skills: {e}")
+        return None
 
-def map_job_keys(job):
-    return {
-        'Job Title': job['job_title'],
-        'Job Description': job['job_description'],
-        'Required Skills': job['required_skills'],
-        'Salary Range': job['salary_range'],
-        'Location': job['location'],
-        'Company': job['company'],
-        'Experience Level': job['experience_level'],
-        'Industry': job['industry'],
-        'Job Type': job['job_type'],
-        'Date Posted': job['date_posted']
-    }
+def get_all_jobs():
+    try:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT * FROM jobs")
+        jobs = cursor.fetchall()
+        cursor.close()
+        return jobs
+    except Exception as e:
+        logging.error(f"Error fetching jobs: {e}")
+        return None
 
-def check_user_skills(user_skills):
-    if not user_skills:
-        return False
-    
-    # Fetch skills from the skills table in the database
-    skills_query = '''
-        SELECT COUNT(*) AS skill_count
-        FROM skills
-        WHERE skill_name IN %s and skill_id<117
-    '''
-    skill_names = [skill.strip() for skill in user_skills.split(',')]
+@job_blueprint.route('/jobs')
+def jobs():
+    user_id = session.get('id')
 
-    print(skill_names)
-    
-    cursor = get_mysql_connection()
-    cursor.execute(skills_query,[skill_names])
-    result = cursor.fetchone()
-    cursor.close()
-    
-    # Check if any skills match
-    skill_count = result['skill_count'] if result else 0
-    return skill_count > 0
-
-# Modify calculate_recommendations to use check_user_skills
-def calculate_recommendations(user_skills):
-    global recommended_jobs, vectorizer, top_n_indices
-
-    if user_skills:
-        # Check if user skills match any skills in the database
-        if not check_user_skills(user_skills):
-            recommended_jobs = pd.DataFrame()  # Empty DataFrame if no skills match
-            return
-        
-        combined_skills = data['Required Skills'].apply(lambda x: x.replace(', ', ' ')).tolist()
-        combined_skills.insert(0, user_skills.replace(', ', ' '))  # Insert user skills at index 0
-
-        skills_matrix = vectorizer.fit_transform(combined_skills)
-        job_skills_matrix = skills_matrix[1:]  # Exclude user skills from the matrix
-        user_skills_vector = skills_matrix[0]  # The first vector is the user skills vector
-
-        similarity_scores = cosine_similarity(user_skills_vector, job_skills_matrix)
-        top_n_indices = similarity_scores.argsort()[0][-20:][::-1]
-        recommended_jobs = data.iloc[top_n_indices]
-    else:
-        recommended_jobs = pd.DataFrame()
-
-# Blueprint initialization
-job_blueprint = Blueprint('job', __name__, url_prefix='/job', static_folder='static', template_folder='templates')
-
-# Helper function to get MySQL connection
-def get_mysql_connection():
-    return current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-
-# Before first request, calculate recommendations
-# @job_blueprint.before_app_request
-def preprocess_recommendations():
-    global user_skills
-    # Fetch user skills from database
-    user_email = session.get("email","")  # Replace with actual user email
-    user_skills_query = '''
-        SELECT skills.skill_name
-        FROM user_skills
-        JOIN skills ON user_skills.skill_id = skills.skill_id
-        WHERE user_skills.email = %s
-    '''
-    cursor = get_mysql_connection()
-    cursor.execute(user_skills_query, (user_email,))
-    skills_results = cursor.fetchall()
-    cursor.close()
-
-    # Convert fetched skills into a string format
-    user_skills_list = [skill['skill_name'] for skill in skills_results]
-    user_skills = ', '.join(user_skills_list) if user_skills_list else ''
-
-    # Calculate recommendations based on fetched user skills
-    calculate_recommendations(user_skills)
-
-# Route to list recommended jobs
-@job_blueprint.route('/')
-def list_jobs():
-    preprocess_recommendations()
-    if 'email' not in session:
+    if not user_id:
+        flash('You need to sign in first.', 'warning')
         return redirect(url_for('auth_blueprint.signin'))
-    global recommended_jobs
 
-    # Check if recommended_jobs is empty or not
-    if not recommended_jobs.empty:
-        jobs_list = recommended_jobs.to_dict('records')
-        # Create a set of job titles
-        jobs_title = (title['Job Title'] for title in jobs_list[1:])
-        job_titles_set = list(set(jobs_title))
-        # print(job_titles_set)
-        return render_template('jobs.html', jobs=recommended_jobs.to_dict('records'), set_jobs = job_titles_set )  # Convert DataFrame to list of dicts
-    else:
-        return render_template('jobs.html', jobs=None)  # Pass None if recommended_jobs is empty
+    try:
+        user_skills = get_user_skills(user_id)
+        jobs = get_all_jobs()
 
-@job_blueprint.route('/search')
-def search_jobs():
-    preprocess_recommendations()
-    if 'email' not in session:
-        return redirect(url_for('auth_blueprint.signin'))
-    global user_skills
-    global recommended_jobs
-    global top_n_indices
+        if user_skills is None or jobs is None:
+            flash('Error retrieving data.', 'danger')
+            return render_template('Home.html', job_data=[], job_offers=[])
 
-    title = request.args.get('title', '')
+        if not user_skills or not jobs:
+            flash('No skills or jobs found.', 'info')
+            return render_template('Home.html', job_data=[], job_offers=jobs)
 
-    if title:
-        calculate_recommendations(user_skills)
-        if recommended_jobs.empty:
-            return render_template('jobs.html', jobs=None)  # Pass None if no titles or ids match
+        job_descriptions = [job['job_description'] for job in jobs]
+        job_ids = [job['id'] for job in jobs]
 
+        vectorizer = TfidfVectorizer(stop_words='english')
+        job_vectors = vectorizer.fit_transform(job_descriptions)
+        user_vector = vectorizer.transform([user_skills])
 
-        
-        # Filter recommended jobs based on title similarity
-        filtered_jobs = recommended_jobs[recommended_jobs['Job Title'].str.contains(title, case=False)]
+        similarities = cosine_similarity(user_vector, job_vectors).flatten()
+        job_similarity_df = pd.DataFrame({'job_id': job_ids, 'similarity': similarities})
+        job_similarity_df = job_similarity_df.sort_values(by='similarity', ascending=False)
 
-        # Extract job titles for SQL query
-        recommended_job_titles = filtered_jobs['Job Title'].tolist()
-        indices = [i+1 for i in top_n_indices]
-        print(recommended_job_titles)
-        print(indices)
+        top_matching_jobs = []
+        for _, row in job_similarity_df.iterrows():
+            job_id = row['job_id']
+            top_matching_jobs.append(next(job for job in jobs if job['id'] == job_id))
 
-        if recommended_job_titles and indices:
-            cursor = get_mysql_connection()
+        return render_template('Home.html', job_data=top_matching_jobs, job_offers=jobs)
 
-            # Construct the placeholders for job titles and ids
-            job_title_placeholders = ', '.join(['%s'] * len(recommended_job_titles))
-            id_placeholders = ', '.join(['%s'] * len(indices))
-            query = f'''
-                SELECT *
-                FROM jobs
-                WHERE job_title IN ({job_title_placeholders})
-                AND id IN ({id_placeholders})
-            '''
-
-            # Combine both lists for the cursor execute
-            cursor.execute(query, recommended_job_titles + indices)
-            jobs = cursor.fetchall()
-            cursor.close()
-            print(jobs)
-
-            # Map keys before sending to the frontend
-            mapped_jobs = [map_job_keys(job) for job in jobs]
-
-            return render_template('jobs.html', jobs=mapped_jobs)
-        else:
-            return render_template('jobs.html', jobs=None)  # Pass None if no titles or ids match
-    else:
-        return redirect(url_for('job.list_jobs'))
+    except Exception as e:
+        logging.error(f"Error in job matching process: {e}")
+        flash('An error occurred while processing your request.', 'danger')
+        return render_template('Home.html', job_data=[], job_offers=[])
