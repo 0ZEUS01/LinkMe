@@ -246,4 +246,4 @@ INSERT INTO country (country_name, ISO) VALUES ('Western Sahara', 'EH');
 INSERT INTO country (country_name, ISO) VALUES ('Yemen', 'YE');
 INSERT INTO country (country_name, ISO) VALUES ('Zambia', 'ZM');
 INSERT INTO country (country_name, ISO) VALUES ('Zimbabwe', 'ZW');
-GO
+

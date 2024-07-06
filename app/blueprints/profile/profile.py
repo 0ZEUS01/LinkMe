@@ -91,7 +91,7 @@ def profile():
                     'phoneNumber': request.form.get('phoneNumber'),
                     'country': request.form.get('country'),
                     'address': request.form.get('address'),
-                    'password': '',  # Assuming password is not updated here
+                    'password': '', 
                     'profile_pic_path': filename if profile_pic.filename else request.form.get('original_profile_pic')
                 }
 
@@ -104,8 +104,6 @@ def profile():
 
                 return redirect(url_for('.profile'))
 
-            # Handle other form fields update here
-            # This part should handle updating other profile information
             user_data = {
                 'id': id,
                 'firstName': request.form.get('firstName'),
@@ -115,7 +113,7 @@ def profile():
                 'phoneNumber': request.form.get('phoneNumber'),
                 'country': request.form.get('country'),
                 'address': request.form.get('address'),
-                'password': '',  # Assuming password is not updated here
+                'password': '',  
                 'profile_pic_path': request.form.get('original_profile_pic')
             }
 
@@ -126,7 +124,7 @@ def profile():
                 flash('An error occurred while updating profile.', 'danger')
                 current_app.logger.error(f"Error updating profile: {e}")
 
-            return redirect(url_for('.profile'))  # Redirect to profile page after updating
+            return redirect(url_for('.profile')) 
 
         cursor.execute('SELECT * FROM users WHERE id = %s', (id,))
         user_data = cursor.fetchone()
@@ -175,3 +173,71 @@ def change_password():
         return redirect(url_for('.profile'))
     else:
         return redirect(url_for('auth_blueprint.signin'))
+
+@profile_blueprint.route('/experiences', methods=['GET'])
+def experiences():
+    if 'id' not in session:
+        return redirect(url_for('auth_blueprint.signin'))
+
+    user_id = session['id']
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM experiences WHERE id = %s', (user_id,))
+    experiences = cursor.fetchall()
+    cursor.close()
+
+    return render_template('experience.html', experiences=experiences)
+
+
+@profile_blueprint.route('/add_experience', methods=['POST'])
+def add_experience():
+    if 'id' not in session:
+        return redirect(url_for('auth_blueprint.signin'))
+
+    user_id = session['id']
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    experience_title = request.form.get('ExperienceTitle')
+    description = request.form.get('Description')
+    start_date = request.form.get('startDate')
+    end_date = request.form.get('endDate')
+
+    cursor.execute('''
+        INSERT INTO experiences (id, title, description, start_date, end_date)
+        VALUES (%s, %s, %s, %s, %s)
+    ''', (user_id, experience_title, description, start_date, end_date))
+    current_app.mysql.connection.commit()
+    cursor.close()
+    flash('Experience added successfully!', 'success')
+
+    return redirect(url_for('profile_blueprint.experiences'))
+
+@profile_blueprint.route('/edit_delete_experience', methods=['POST'])
+def edit_delete_experience():
+    if 'id' not in session:
+        return redirect(url_for('auth_blueprint.signin'))
+
+    user_id = session['id']
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    experience_id = request.form.get('experience_id')
+    experience_title_show = request.form.get('ExperienceTitleShow')
+    description_show = request.form.get('DescriptionShow')
+    start_date_show = request.form.get('startDateShow')
+    end_date_show = request.form.get('endDateShow')
+
+    if 'edit_experience' in request.form:
+        cursor.execute('''
+            UPDATE experiences 
+            SET title=%s, description=%s, start_date=%s, end_date=%s
+            WHERE experience_id=%s AND id=%s
+        ''', (experience_title_show, description_show, start_date_show, end_date_show, experience_id, user_id))
+        current_app.mysql.connection.commit()
+        flash('Experience updated successfully!', 'success')
+
+    elif 'delete_experience' in request.form:
+        cursor.execute('DELETE FROM experiences WHERE experience_id=%s AND id=%s', (experience_id, user_id))
+        current_app.mysql.connection.commit()
+        flash('Experience deleted successfully!', 'success')
+
+    cursor.close()
+    return redirect(url_for('profile_blueprint.experiences'))

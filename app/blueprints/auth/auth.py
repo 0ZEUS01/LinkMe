@@ -133,6 +133,10 @@ def signin():
             session['email'] = email
             session['username'] = account['username']
             session['id'] = account['id']
+            session['profile_pic_path'] = account['profile_pic_path']
+            session['first_name'] = account['first_name']
+            session['last_name'] = account['last_name']
+            session['nationality'] = account['nationality']
             cursor.close()
             return redirect(url_for('profile_blueprint.profile'))
         

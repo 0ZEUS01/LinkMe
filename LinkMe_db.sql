@@ -33,20 +33,20 @@ CREATE TABLE skills (
     skill_name VARCHAR(100) UNIQUE NOT NULL
 );
 CREATE TABLE user_skills (
-    email VARCHAR(100),
+    id INT,
     skill_id INT,
-    PRIMARY KEY (email, skill_id),
-    FOREIGN KEY (email) REFERENCES users(email),
+    PRIMARY KEY (id, skill_id),
+    FOREIGN KEY (id) REFERENCES users(id),
     FOREIGN KEY (skill_id) REFERENCES skills(skill_id)
 );
 CREATE TABLE experiences (
     experience_id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(100),
+    id INT,
     title VARCHAR(255),
     description TEXT,
     start_date DATE,
     end_date DATE,
-    FOREIGN KEY (email) REFERENCES users(email)
+    FOREIGN KEY (id) REFERENCES users(id)
 );
 
 CREATE TABLE jobs (
