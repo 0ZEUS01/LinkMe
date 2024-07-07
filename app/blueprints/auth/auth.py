@@ -1,6 +1,6 @@
 import os
 import bcrypt
-from flask import Flask, render_template, redirect, url_for, flash, session, current_app
+from flask import Flask, render_template, redirect, url_for, flash, session, current_app, request
 from flask import Blueprint
 from .forms import SignupForm, SigninForm
 from werkzeug.utils import secure_filename
@@ -36,6 +36,7 @@ def save_user_data(data, profile_pic_filename=None):
     ''', (data['username'], data['email'], hashed_password, data['FirstName'], data['LastName'], data['PhoneNumber'], data['BirthDate'], data['Address'], data['country'], profile_pic_path))
     
     current_app.mysql.connection.commit()
+
 @auth_blueprint.route('/', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
@@ -62,15 +63,21 @@ def signup():
             return redirect(url_for('auth_blueprint.signup'))
 
         profile_pic_filename = None
-        if form.picture.data:
-            picture = form.picture.data
-            if picture and allowed_file(picture.filename):
-                profile_pic_filename = secure_filename(picture.filename)
-                picture.save(os.path.join(current_app.config['UPLOAD_FOLDER'], profile_pic_filename))
-            else:
-                flash("Invalid file type for profile picture. Allowed types are JPG and PNG.", 'danger')
-                return redirect(url_for('auth_blueprint.signup'))
-
+        if 'profile_pic' in request.files:
+            profile_pic = request.files['profile_pic']
+            if profile_pic.filename != '':
+                if allowed_file(profile_pic.filename):
+                    filename = secure_filename(profile_pic.filename)
+                    upload_folder = current_app.config['UPLOAD_FOLDER']
+                    if not os.path.exists(upload_folder):
+                        os.makedirs(upload_folder)
+                    profile_pic_path = os.path.join(upload_folder, filename)
+                    profile_pic.save(profile_pic_path)
+                    profile_pic_filename = filename
+                else:
+                    flash('Invalid file type! Please upload only JPG, PNG, or JPEG.', 'danger')
+                    return redirect(request.url)
+        
         user_data = {
             'username': username,
             'email': email,
@@ -114,9 +121,9 @@ def username_exists(username):
 def logout():
     session.pop('email', None)
     session.pop('username', None)
-    session.pop('id',None)
+    session.pop('id', None)
+    session.pop('profile_pic_path', None)
     return redirect(url_for('auth_blueprint.signin'))
-
 
 @auth_blueprint.route('/signin', methods=['GET', 'POST'])
 def signin():

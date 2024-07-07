@@ -48,11 +48,8 @@
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
 
-    <!-- Helpers -->
     <script src="{{ url_for('static', filename='vendor/js/helpers.js') }}"></script>
 
-    <!-- Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!-- Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ url_for('static', filename='js/config.js') }}"></script>
 </head>
 
@@ -161,7 +158,10 @@
                                                     <input class="form-control" type="text" id="skill" name="skill" value="{{ skill.skill_name }}" readonly />
                                                 </div>
                                                 <div class="mb-3 col-md-4">
-                                                    <button type="submit" name="delete_skill" class="btn btn-danger me-2">Delete</button>
+                                                    <form method="POST" action="{{ url_for('profile_blueprint.delete_skill') }}">
+                                                        <input type="hidden" name="skill_id" value="{{ skill.skill_id }}">
+                                                        <button type="submit" name="delete_skill" class="btn btn-danger me-2">Delete</button>
+                                                    </form>
                                                 </div>
                                                 {% endfor %}
                                                 {% else %}
@@ -170,6 +170,7 @@
                                             </div>
                                         </form>
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>

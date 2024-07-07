@@ -52,16 +52,21 @@
               <div class="row">
                 <div class="card-body">
                   <div class="d-flex align-items-start align-items-sm-center gap-4">
-                    <img src="{{ url_for('static', filename='img/avatars/1.png') }}" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
-                    <div class="button-wrapper">
-                      <label for="picture" class="btn btn-primary me-2 mb-4" tabindex="0" style="background-color: #A993FF; border: #f8020b;">
-                        <i class="bx bx-upload d-block d-sm-none"></i>
-                        <input type="file" id="picture" name="picture" class="account-file-input" accept="image/png, image/jpeg" onchange="showPreview(event)" />
-                      </label>
-                      <p class="text-muted mb-0">Allowed JPG, or PNG.</p>
-                    </div>
+                      <img src="{{ url_for('static', filename='img/avatars/1.png') }}" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+                      <div class="button-wrapper">
+                          <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0"
+                                 style="background-color: #A993FF; border: #f8020b;">
+                              <span class="d-none d-sm-block">Upload new photo</span>
+                              <i class="bx bx-upload d-block d-sm-none"></i>
+                              <input type="file" id="upload" name="profile_pic" class="account-file-input" hidden accept="image/png, image/jpeg" onchange="showPreview(event)" />
+                          </label>
+                          <p class="text-muted mb-0">Allowed JPG, or PNG.</p>
+                      </div>
                   </div>
-                </div>
+              </div>
+              
+              
+              
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label for="FirstName" class="form-label">First Name <span style="color: red;">*</span></label>
@@ -160,15 +165,17 @@
   <!-- Custom JS to show image preview and validate form -->
   <script>
     function showPreview(event) {
-      if (event.target.files.length > 0) {
-        var src = URL.createObjectURL(event.target.files[0]);
-        var preview = document.getElementById("uploadedAvatar");
-        preview.src = src;
-        preview.style.display = "block";
-      }
+        if (event.target.files.length > 0) {
+            let src = URL.createObjectURL(event.target.files[0]);
+            let preview = document.getElementById("uploadedAvatar");
+            preview.src = src;
+            preview.style.display = "block";
+        }
     }
+</script>
 
-  </script>
+
+
 </body>
 
 </html>

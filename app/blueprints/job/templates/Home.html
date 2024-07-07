@@ -15,6 +15,23 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='home/css/templatemo-edu-meeting.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='home/css/owl.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='home/css/lightbox.css') }}">
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fonts/boxicons.css') }}" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/core.css') }}"
+        class="template-customizer-core-css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/theme-default.css') }}"
+        class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/demo.css') }}" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+
+    <script src="{{ url_for('static', filename='vendor/js/helpers.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/config.js') }}"></script>
 </head>
 
 <body>
@@ -42,9 +59,59 @@
                                 </div>
                             </li>
                             <li><a href="/jobs">Jobs</a></li>
-                            <li><a href="/profile/profile">Profile <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                                <a class="dropdown-toggle hide-arrow" href="javascript:void(0);"
+                                data-bs-toggle="dropdown">Profile <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
                                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z" />
-                                    </svg></a></li>
+                                    </svg></a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <div class="d-flex">
+                                                <div class="flex-shrink-0 me-3">
+                                                    <div class="avatar avatar-online">
+                                                        <img src="{{ url_for('profile_blueprint.static', filename=session['profile_pic_path']) if session['profile_pic_path'] else url_for('static', filename='img/avatars/1.png') }}" alt
+                                                            class="w-px-40 h-auto rounded-circle" />
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <span class="fw-semibold d-block">{{ session[first_name] }} {{ session[last_name] }}</span>
+                                                    <small class="text-muted">{% for country in countries %}{% if country['country_id'] == session['nationality'] %} {{ country['country_name'] }} {% endif %}{% endfor %}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <div class="dropdown-divider"></div>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/profile/profile">
+                                            <i class="bx bx-user me-2"></i>
+                                            <span class="align-middle">My Profile</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/profile/experiences">
+                                            <i class="bx bx-award me-2"></i>
+                                            <span class="align-middle">My Experiences</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/profile/skills">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stars me-2" viewBox="0 0 19 16">
+                                                <path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.73 1.73 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.73 1.73 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.73 1.73 0 0 0 3.407 2.31zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z"/>
+                                            </svg>
+                                            <span class="align-middle">My Skills</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/logout">
+                                            <i class="bx bx-power-off me-2"></i>
+                                            <span class="align-middle">Log Out</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         </ul>
                         <!-- ***** Menu End ***** -->
                     </nav>
@@ -132,6 +199,23 @@
     <script src="{{ url_for('static', filename='home/js/video.js') }}"></script>
     <script src="{{ url_for('static', filename='home/js/slick-slider.js') }}"></script>
     <script src="{{ url_for('static', filename='home/js/custom.js') }}"></script>
+
+
+    <script src="{{ url_for('static', filename='vendor/libs/jquery/jquery.js') }}"></script>
+    
+                <script src="{{ url_for('static', filename='vendor/libs/popper/popper.js') }}"></script>
+                
+                <script src="{{ url_for('static', filename='vendor/js/bootstrap.js') }}"></script>
+    
+                <script src="{{ url_for('static', filename='vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+                
+
+                <script src="{{ url_for('static', filename='vendor/js/menu.js') }}"></script>
+
+                <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+                <script async defer src="https://buttons.github.io/buttons.js"></script>
+
     <script>
         //according to loftblog tut
         $('.nav li:first').addClass('active');

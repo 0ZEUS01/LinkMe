@@ -307,14 +307,12 @@ def delete_skill():
         return redirect(url_for('auth_blueprint.signin'))
 
     user_id = session['id']
-    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-
     skill_id = request.form.get('skill_id')
 
-    if 'delete_skill' in request.form:
-        cursor.execute('DELETE FROM user_skills WHERE id=%s AND skill_id=%s', (user_id, skill_id))
-        current_app.mysql.connection.commit()
-        flash('Skill deleted successfully!', 'success')
-
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('DELETE FROM user_skills WHERE id = %s AND skill_id = %s', (user_id, skill_id))
+    current_app.mysql.connection.commit()
     cursor.close()
+    
+    flash('Skill deleted successfully!', 'success')
     return redirect(url_for('profile_blueprint.skills'))
