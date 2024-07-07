@@ -2,7 +2,7 @@ import os
 import bcrypt
 from flask import Flask, jsonify, render_template, redirect, url_for, flash, session, current_app, request
 from flask import Blueprint
-from .forms import SignupForm, SigninForm
+from .forms import RecoverPasswordForm, SignupForm, SigninForm
 from werkzeug.utils import secure_filename
 import MySQLdb.cursors
 
@@ -140,6 +140,13 @@ def username_exists(username):
     cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
     account = cursor.fetchone()
     return bool(account)
+
+@auth_blueprint.route('/recoverPassword', methods=['GET'])
+def recoverPassword():
+    form = RecoverPasswordForm()
+    
+    return render_template('recoverAccount.html', form=form)
+
 
 @auth_blueprint.route('/logout', methods=['GET'])
 def logout():

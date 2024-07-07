@@ -40,8 +40,8 @@
 <body background="{{ url_for('static', filename='img/backgrounds/meetings-page-bg.jpg') }}">
   <!-- Content -->
 
-  {% block content %}
-<div class="container-xxl">
+
+  <div class="container-xxl">
     <div class="authentication-wrapper-old authentication-basic container-p-y">
         <div class="authentication-inner">
             <div class="card">
@@ -54,6 +54,16 @@
                     <h4 class="mb-2">Welcome to Link<span style="color: #783b64;">Me</span>! 👋</h4>
                     <p class="mb-4">Please sign-in to your account and start the adventure</p>
                     
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="alert alert-danger" role="alert">
+                                {% for category, message in messages %}
+                                    {{ message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    
                     <form id="formLogin" class="SigninForm mb-3" action="{{ url_for('auth_blueprint.signin') }}" method="POST">
                         {{ form.hidden_tag() }}
                         {{ form.csrf_token }}
@@ -64,7 +74,7 @@
                         <div class="mb-3 form-password-toggle">
                             <div class="d-flex justify-content-between">
                                 <label class="form-label" for="password">Password</label>
-                                <a href="{{ url_for('auth_blueprint.signup') }}">
+                                <a href="{{ url_for('auth_blueprint.recoverPassword') }}">
                                     <b><small style="color: #783b64">Forgot Password?</small></b>
                                 </a>
                             </div>
@@ -95,7 +105,7 @@
         </div>
     </div>
 </div>
-{% endblock %}
+
   <script src="{{ url_for('static', filename='vendor/libs/jquery/jquery.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/libs/popper/popper.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/js/bootstrap.js') }}"></script>
