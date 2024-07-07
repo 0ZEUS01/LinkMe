@@ -1,9 +1,8 @@
 import MySQLdb
-from flask import Blueprint, render_template, session, redirect, url_for
+from flask import Blueprint, render_template, session, redirect, url_for, request
 from app import mysql
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import pandas as pd
 
 job_blueprint = Blueprint('job', __name__, template_folder='templates')
 
@@ -100,13 +99,51 @@ def get_job_offers(user_skills, all_jobs):
 
     similarities = cosine_similarity(user_vector, job_vectors).flatten()
 
-    threshold = 0.2  # Adjust the similarity threshold as needed
+    threshold = 0.0  
     top_matching_jobs = []
     for job, similarity in zip(job_data, similarities):
         if similarity >= threshold:
-            job['similarity'] = similarity * 100  # Convert similarity to percentage
+            job['similarity'] = similarity * 100 
             top_matching_jobs.append(job)
 
     return top_matching_jobs
 
+@job_blueprint.route('/jobs/search')
+def search_jobs():
+    try:
+        user_id = session.get('id')
+        if not user_id:
+            return redirect(url_for('auth_blueprint.signin'))
 
+        user_skills = get_user_skills(user_id)
+        query = request.args.get('query', '').strip().lower()
+
+        if not query:
+            return redirect(url_for('job.jobs'))
+
+        all_jobs = get_all_jobs()
+        filtered_jobs = filter_jobs(all_jobs, user_skills, query)
+
+        return render_template('Home.html', job_data=filtered_jobs, job_offers=[])
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return render_template('Home.html', job_data=[], job_offers=[])
+
+def filter_jobs(all_jobs, user_skills, query):
+    job_data = []
+
+    for job in all_jobs:
+        job_title = job['job_title'].lower()
+        required_skills = job['required_skills'].lower()
+
+        if query in job_title or query in required_skills:
+            required_skill_list = required_skills.split(', ')
+            
+            user_skill_set = set(user_skills.split())
+            required_skill_set = set(required_skill_list)
+            
+            if user_skill_set.intersection(required_skill_set):
+                job_data.append(job)
+
+    return job_data
