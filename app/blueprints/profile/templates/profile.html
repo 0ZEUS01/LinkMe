@@ -242,10 +242,36 @@
                                                             <button id="savePassword" type="submit" class="btn btn-primary me-2">Save new password</button>
                                                             <button type="reset" class="btn btn-outline-secondary">Cancel</button>
                                                         </div>
+                                                        <div id="error-message" class="text-danger"></div>
                                                     </form>
                                         </div>
                                             </div>
-                                        
+                                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                                            <script>
+                                                $(document).ready(function() {
+                                                    $('#formChangePassword').on('submit', function(e) {
+                                                        e.preventDefault();  // Prevent the default form submission
+                                            
+                                                        $.ajax({
+                                                            type: 'POST',
+                                                            url: $(this).attr('action'),
+                                                            data: $(this).serialize(),
+                                                            success: function(response) {
+                                                                if (response.status === 'success') {
+                                                                    // Redirect to profile page or show success message
+                                                                    window.location.href = "{{ url_for('.profile') }}";
+                                                                } else {
+                                                                    // Show error message
+                                                                    $('#error-message').text(response.message);
+                                                                }
+                                                            },
+                                                            error: function() {
+                                                                $('#error-message').text('An error occurred while updating the password.');
+                                                            }
+                                                        });
+                                                    });
+                                                });
+                                            </script>
                                         <!-- Form End -->
                                     </div>
                                     <!-- /Account -->

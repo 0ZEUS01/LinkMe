@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 import os
 import bcrypt
 import MySQLdb.cursors
+from flask import jsonify
 
 profile_blueprint = Blueprint('profile_blueprint', __name__, static_folder='static', template_folder='templates')
 
@@ -149,8 +150,7 @@ def change_password():
         confirm_new_password = request.form.get('ConfirmNewPassword')
 
         if new_password != confirm_new_password:
-            flash('New password and confirmation do not match!', 'danger')
-            return redirect(url_for('.profile'))
+            return jsonify({'status': 'error', 'message': 'New password and confirmation do not match!'})
 
         cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT password FROM users WHERE id = %s', (user_id,))
@@ -161,18 +161,16 @@ def change_password():
             try:
                 cursor.execute('UPDATE users SET password = %s WHERE id = %s', (hashed_new_password, user_id))
                 current_app.mysql.connection.commit()
-                flash('Password updated successfully!', 'success')
+                return jsonify({'status': 'success', 'message': 'Password updated successfully!'})
             except Exception as e:
                 current_app.logger.error(f"Error updating password: {e}")
-                flash('An error occurred while updating the password.', 'danger')
+                return jsonify({'status': 'error', 'message': 'An error occurred while updating the password.'})
             finally:
                 cursor.close()
         else:
-            flash('Old password is incorrect!', 'danger')
+            return jsonify({'status': 'error', 'message': 'Old password is incorrect!'})
 
-        return redirect(url_for('.profile'))
-    else:
-        return redirect(url_for('auth_blueprint.signin'))
+    return jsonify({'status': 'error', 'message': 'Unauthorized access.'})
 
 @profile_blueprint.route('/deleteAccount', methods=['POST'])
 def deleteAccount():
