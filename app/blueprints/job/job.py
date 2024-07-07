@@ -39,44 +39,74 @@ def jobs():
         all_jobs = get_all_jobs()
 
         if not user_skills or not all_jobs:
-            return render_template('Home.html', job_data=[], job_offers=all_jobs)
+            return render_template('Home.html', job_data=[], job_offers=[])
 
-        job_data = []
-        job_titles_seen = set()
-        job_descriptions = []
-        job_ids = []
+        potential_jobs = get_potential_jobs(user_skills, all_jobs)
+        job_offers = get_job_offers(user_skills, all_jobs)
 
-        for job in all_jobs:
-            job_title = job['job_title']
-            if job_title not in job_titles_seen:
-                job_titles_seen.add(job_title)
-                required_skills = job['required_skills']
-                required_skill_list = required_skills.split(', ')
-                
-                user_skill_set = set(user_skills.split())
-                required_skill_set = set(required_skill_list)
-                
-                if user_skill_set.intersection(required_skill_set):
-                    job_data.append(job)
-                    job_descriptions.append(required_skills)
-                    job_ids.append(job['job_id'])
-
-        vectorizer = TfidfVectorizer(stop_words='english')
-        job_vectors = vectorizer.fit_transform(job_descriptions)
-        user_vector = vectorizer.transform([user_skills])
-
-        similarities = cosine_similarity(user_vector, job_vectors).flatten()
-
-        threshold = 0.2  # Adjust the similarity threshold as needed
-        top_matching_jobs = []
-        for job, similarity in zip(job_data, similarities):
-            if similarity >= threshold:
-                job['similarity'] = similarity * 100  # Convert similarity to percentage
-                top_matching_jobs.append(job)
-
-        return render_template('Home.html', job_data=top_matching_jobs, job_offers=all_jobs)
+        return render_template('Home.html', job_data=potential_jobs, job_offers=job_offers)
 
     except Exception as e:
         print(f"Error: {e}")
         return render_template('Home.html', job_data=[], job_offers=[])
+
+def get_potential_jobs(user_skills, all_jobs):
+    job_data = []
+    job_titles_seen = set()
+
+    for job in all_jobs:
+        job_title = job['job_title']
+        if job_title not in job_titles_seen:
+            job_titles_seen.add(job_title)
+            required_skills = job['required_skills']
+            required_skill_list = required_skills.split(', ')
+            
+            user_skill_set = set(user_skills.split())
+            required_skill_set = set(required_skill_list)
+            
+            if user_skill_set.intersection(required_skill_set):
+                job_data.append(job)
+
+    vectorizer = TfidfVectorizer(stop_words='english')
+    job_descriptions = [job['required_skills'] for job in job_data]
+    job_vectors = vectorizer.fit_transform(job_descriptions)
+    user_vector = vectorizer.transform([user_skills])
+
+    similarities = cosine_similarity(user_vector, job_vectors).flatten()
+
+    for job, similarity in zip(job_data, similarities):
+        job['similarity'] = similarity * 100  # Convert similarity to percentage
+
+    return job_data
+
+def get_job_offers(user_skills, all_jobs):
+    job_data = []
+    job_descriptions = []
+
+    for job in all_jobs:
+        required_skills = job['required_skills']
+        required_skill_list = required_skills.split(', ')
+        
+        user_skill_set = set(user_skills.split())
+        required_skill_set = set(required_skill_list)
+        
+        if user_skill_set.intersection(required_skill_set):
+            job_data.append(job)
+            job_descriptions.append(required_skills)
+
+    vectorizer = TfidfVectorizer(stop_words='english')
+    job_vectors = vectorizer.fit_transform(job_descriptions)
+    user_vector = vectorizer.transform([user_skills])
+
+    similarities = cosine_similarity(user_vector, job_vectors).flatten()
+
+    threshold = 0.2  # Adjust the similarity threshold as needed
+    top_matching_jobs = []
+    for job, similarity in zip(job_data, similarities):
+        if similarity >= threshold:
+            job['similarity'] = similarity * 100  # Convert similarity to percentage
+            top_matching_jobs.append(job)
+
+    return top_matching_jobs
+
 
