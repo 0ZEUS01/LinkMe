@@ -50,7 +50,7 @@ CREATE TABLE experiences (
 );
 
 CREATE TABLE jobs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    job_id INT AUTO_INCREMENT PRIMARY KEY,
     job_title VARCHAR(255) NOT NULL,
     job_description TEXT,
     required_skills TEXT,

@@ -1,6 +1,5 @@
 import MySQLdb
-import logging
-from flask import Blueprint, render_template, session, redirect, url_for, flash
+from flask import Blueprint, render_template, session, redirect, url_for
 from app import mysql
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -8,76 +7,76 @@ import pandas as pd
 
 job_blueprint = Blueprint('job', __name__, template_folder='templates')
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
-
 def get_user_skills(user_id):
-    try:
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        query = """
-            SELECT s.skill_name
-            FROM user_skills us
-            JOIN skills s ON us.skill_id = s.skill_id
-            WHERE us.id = %s
-        """
-        cursor.execute(query, (user_id,))
-        skills = cursor.fetchall()
-        cursor.close()
-        return " ".join(skill['skill_name'] for skill in skills)
-    except Exception as e:
-        logging.error(f"Error fetching user skills: {e}")
-        return None
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    query = """
+        SELECT s.skill_name
+        FROM user_skills us
+        JOIN skills s ON us.skill_id = s.skill_id
+        WHERE us.id = %s
+    """
+    cursor.execute(query, (user_id,))
+    skills = cursor.fetchall()
+    cursor.close()
+    return " ".join(skill['skill_name'] for skill in skills)
 
 def get_all_jobs():
-    try:
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT * FROM jobs")
-        jobs = cursor.fetchall()
-        cursor.close()
-        return jobs
-    except Exception as e:
-        logging.error(f"Error fetching jobs: {e}")
-        return None
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM jobs")
+    jobs = cursor.fetchall()
+    cursor.close()
+    return jobs
 
 @job_blueprint.route('/jobs')
 def jobs():
-    user_id = session.get('id')
-
-    if not user_id:
-        flash('You need to sign in first.', 'warning')
-        return redirect(url_for('auth_blueprint.signin'))
-
     try:
+        user_id = session.get('id')
+
+        if not user_id:
+            return redirect(url_for('auth_blueprint.signin'))
+
         user_skills = get_user_skills(user_id)
-        jobs = get_all_jobs()
+        all_jobs = get_all_jobs()
 
-        if user_skills is None or jobs is None:
-            flash('Error retrieving data.', 'danger')
-            return render_template('Home.html', job_data=[], job_offers=[])
+        if not user_skills or not all_jobs:
+            return render_template('Home.html', job_data=[], job_offers=all_jobs)
 
-        if not user_skills or not jobs:
-            flash('No skills or jobs found.', 'info')
-            return render_template('Home.html', job_data=[], job_offers=jobs)
+        job_data = []
+        job_titles_seen = set()
+        job_descriptions = []
+        job_ids = []
 
-        job_descriptions = [job['job_description'] for job in jobs]
-        job_ids = [job['id'] for job in jobs]
+        for job in all_jobs:
+            job_title = job['job_title']
+            if job_title not in job_titles_seen:
+                job_titles_seen.add(job_title)
+                required_skills = job['required_skills']
+                required_skill_list = required_skills.split(', ')
+                
+                user_skill_set = set(user_skills.split())
+                required_skill_set = set(required_skill_list)
+                
+                if user_skill_set.intersection(required_skill_set):
+                    job_data.append(job)
+                    job_descriptions.append(required_skills)
+                    job_ids.append(job['job_id'])
 
         vectorizer = TfidfVectorizer(stop_words='english')
         job_vectors = vectorizer.fit_transform(job_descriptions)
         user_vector = vectorizer.transform([user_skills])
 
         similarities = cosine_similarity(user_vector, job_vectors).flatten()
-        job_similarity_df = pd.DataFrame({'job_id': job_ids, 'similarity': similarities})
-        job_similarity_df = job_similarity_df.sort_values(by='similarity', ascending=False)
 
+        threshold = 0.2  # Adjust the similarity threshold as needed
         top_matching_jobs = []
-        for _, row in job_similarity_df.iterrows():
-            job_id = row['job_id']
-            top_matching_jobs.append(next(job for job in jobs if job['id'] == job_id))
+        for job, similarity in zip(job_data, similarities):
+            if similarity >= threshold:
+                job['similarity'] = similarity * 100  # Convert similarity to percentage
+                top_matching_jobs.append(job)
 
-        return render_template('Home.html', job_data=top_matching_jobs, job_offers=jobs)
+        return render_template('Home.html', job_data=top_matching_jobs, job_offers=all_jobs)
 
     except Exception as e:
-        logging.error(f"Error in job matching process: {e}")
-        flash('An error occurred while processing your request.', 'danger')
+        print(f"Error: {e}")
         return render_template('Home.html', job_data=[], job_offers=[])
+
