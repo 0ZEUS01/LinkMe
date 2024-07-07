@@ -150,11 +150,9 @@ def recoverPassword():
 
 @auth_blueprint.route('/logout', methods=['GET'])
 def logout():
-    session.pop('email', None)
-    session.pop('username', None)
-    session.pop('id', None)
-    session.pop('profile_pic_path', None)
+    session.clear()  # Clear all session variables and flash messages
     return redirect(url_for('auth_blueprint.signin'))
+
 
 @auth_blueprint.route('/signin', methods=['GET', 'POST'])
 def signin():

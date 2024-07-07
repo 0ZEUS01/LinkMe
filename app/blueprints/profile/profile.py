@@ -174,6 +174,25 @@ def change_password():
     else:
         return redirect(url_for('auth_blueprint.signin'))
 
+@profile_blueprint.route('/deleteAccount', methods=['POST'])
+def deleteAccount():
+    if 'id' not in session:
+        return redirect(url_for('auth_blueprint.signin'))
+
+    user_id = session['id']
+    
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('DELETE FROM users WHERE id = %s', (user_id,))
+    current_app.mysql.connection.commit()
+    cursor.close()
+    
+    # Clear the entire session
+    session.clear()
+    
+    flash('User deleted successfully!', 'success')
+    return redirect(url_for('auth_blueprint.signin'))
+
+
 @profile_blueprint.route('/experiences', methods=['GET'])
 def experiences():
     if 'id' not in session:
