@@ -19,8 +19,19 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/demo.css') }}" />
   <!-- Vendors CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-  <!-- Page CSS -->
-  <!-- Page -->
+  <style>
+    .form-control {
+        transition: border-color 0.3s;
+    }
+    .form-label .text-danger {
+      display: inline;
+  }
+  
+  .form-check-label .text-danger {
+      display: inline;
+  }
+  
+</style>
   <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/pages/page-auth.css') }}" />
   <!-- Helpers -->
   <script src="{{ url_for('static', filename='vendor/js/helpers.js') }}"></script>
@@ -33,124 +44,126 @@
   <!-- Content -->
   <div class="container-xxl">
     <div class="authentication-wrapper authentication-basic container-p-y">
-      <div class="authentication-inner">
-        <!-- Register Card -->
-        <div class="card">
-          <div class="card-body">
-            <!-- Logo -->
-            <div class="app-brand justify-content-center">
-              <a href="../landing/index_guest.html" class="app-brand-link gap-2">
-                <img src="{{ url_for('static', filename='img/icons/linkme.png') }}" alt="logo" width="100px">
-              </a>
-            </div>
-            <!-- /Logo -->
-            <h4 class="mb-2">Adventure starts here 🚀</h4>
-            <p class="mb-3"></p>
-
-            <form id="formRegister" class="mb-3" action="/" method="POST" enctype="multipart/form-data">
-              {{ form.hidden_tag() }}
-              <div class="row">
+        <div class="authentication-inner">
+            <!-- Register Card -->
+            <div class="card">
                 <div class="card-body">
-                  <div class="d-flex align-items-start align-items-sm-center gap-4">
-                      <img src="{{ url_for('static', filename='img/avatars/1.png') }}" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
-                      <div class="button-wrapper">
-                          <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0"
-                                 style="background-color: #A993FF; border: #f8020b;">
-                              <span class="d-none d-sm-block">Upload new photo</span>
-                              <i class="bx bx-upload d-block d-sm-none"></i>
-                              <input type="file" id="upload" name="profile_pic" class="account-file-input" hidden accept="image/png, image/jpeg" onchange="showPreview(event)" />
-                          </label>
-                          <p class="text-muted mb-0">Allowed JPG, or PNG.</p>
-                      </div>
-                  </div>
-              </div>
-              
-              
-              
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="FirstName" class="form-label">First Name <span style="color: red;">*</span></label>
-                    <input type="text" class="form-control" required="" id="FirstName" name="FirstName" placeholder="Enter your first name" autofocus>
-                  </div>
-                  <div class="mb-3">
-                    <label for="PhoneNumber" class="form-label">Phone Number <span style="color: red;">*</span></label>
-                    <input type="text" class="form-control" required="" id="PhoneNumber" name="PhoneNumber" placeholder="Enter your phone number" autofocus>
-                  </div>
-                  <div class="mb-3">
-                    <label for="BirthDate" class="form-label">Birth Date <span style="color: red;">*</span></label>
-                    <input type="date" class="form-control" required="" id="BirthDate" name="BirthDate" placeholder="Enter your birth date" autofocus>
-                  </div>
-                  <div class="mb-3">
-                    <label for="email" class="form-label">Email <span style="color: red;">*</span></label>
-                    <input type="text" class="form-control" required="" id="email" name="email" placeholder="Enter your email">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="LastName" class="form-label">Last Name <span style="color: red;">*</span></label>
-                    <input type="text" class="form-control" required="" id="LastName" name="LastName" placeholder="Enter your last name" autofocus>
-                  </div>
-                  <div class="mb-3">
-                    <label for="username" class="form-label">Username <span style="color: red;">*</span></label>
-                    <input type="text" class="form-control" required="" id="username" name="username" placeholder="Enter your username" autofocus>
-                  </div>
-                  <div class="mb-3 form-password-toggle">
-                    <label class="form-label" for="password">Password <span style="color: red;">*</span></label>
-                    <div class="input-group input-group-merge">
-                      <input type="password" id="password" class="form-control" required="" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password">
-                      <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                    <!-- Logo -->
+                    <div class="app-brand justify-content-center">
+                        <a href="../landing/index_guest.html" class="app-brand-link gap-2">
+                            <img src="{{ url_for('static', filename='img/icons/linkme.png') }}" alt="logo" width="100px">
+                        </a>
                     </div>
-                  </div>
-                  <div class="mb-3 form-password-toggle">
-                    <label class="form-label" for="c_password" >Confirm password <span style="color: red;">*</span></label>
-                    <div class="input-group input-group-merge">
-                      <input type="password" id="c_password" required="" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password">
-                      <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                    </div>
-                  </div>
-                </div>
-                <div class="mb-3 col-md-6">
-                  <label class="form-label" for="country">Nationality <span style="color: red;">*</span></label>
-                  <select id="country" name="country" class="form-select" required="">
-                    <option value="#" selected>Select Your Nationality</option>
-                    {% for country in countries %}
-                      <option value="{{ country['country_id'] }}">{{ country['country_name'] }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div class="mb-3 col-md-6">
-                  <label for="Address" class="form-label" >Address <span style="color: red;">*</span></label>
-                  <input type="text" class="form-control" required="" id="Address" name="Address" placeholder="Enter your Address">
-                </div>
-                <div class="mb-3">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" required="">
-                    <label class="form-check-label" for="terms-conditions">
-                      I agree to <a href="javascript:void(0);" style="color: #783b64">privacy policy & terms</a> <span style="color: red;">*</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <button class="btn btn-primary d-grid w-100" type="submit" id="signupbtn" style="background-color: #A993FF; border: #f8020b;">Sign up</button>
-            </form>
+                    <h4 class="mb-2">Adventure starts here 🚀</h4>
+                    <p class="mb-3"></p>
 
-            <p class="text-center">
-              <span>Already have an account?</span>
-              <a href="/signin" style="color: #A993FF;">
-                <span>Sign in instead</span>
-              </a>
-            </p>
-          </div>
+                    <form id="formRegister" class="mb-3" action="/" method="POST" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        <div class="row">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start align-items-sm-center gap-4">
+                                    <img src="{{ url_for('static', filename='img/avatars/1.png') }}" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+                                    <div class="button-wrapper">
+                                        <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0" style="background-color: #A993FF; border: #f8020b;">
+                                            <span class="d-none d-sm-block">Upload new photo</span>
+                                            <i class="bx bx-upload d-block d-sm-none"></i>
+                                            <input type="file" id="upload" name="profile_pic" class="account-file-input" hidden accept="image/png, image/jpeg" onchange="showPreview(event)" />
+                                        </label>
+                                        <p class="text-muted mb-0">Allowed JPG, or PNG.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="mb-3 col-md-6">
+                                    <label for="FirstName" class="form-label">First Name<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" required="" id="FirstName" name="FirstName" placeholder="Enter your first name" autofocus>
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label for="LastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" required="" id="LastName" name="LastName" placeholder="Enter your last name" autofocus>
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" required="" id="email" name="email" placeholder="Enter your email">
+                                    <span></span>
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" required="" id="username" name="username" placeholder="Enter your username" autofocus>
+                                    <span></span>
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label for="PhoneNumber" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" required="" id="PhoneNumber" name="PhoneNumber" placeholder="Enter your phone number" autofocus>
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label for="BirthDate" class="form-label">Birth Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" required="" id="BirthDate" name="BirthDate" placeholder="Enter your birth date" autofocus>
+                                </div>
+                                <div class="mb-3 col-md-6 form-password-toggle">
+                                  <label class="form-label" for="password">Password <span class="text-danger">*</span></label>
+                                  <div class="input-group input-group-merge">
+                                    <input type="password" id="password" class="form-control" required="" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password">
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                  </div>
+                                </div>
+                                <div class="mb-3 col-md-6 form-password-toggle">
+                                  <label class="form-label" for="c_password">Confirm password <span class="text-danger">*</span></label>
+                                  <div class="input-group input-group-merge">
+                                      <input type="password" id="c_password" required="" class="form-control" name="c_password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password">
+                                      <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                  </div>
+                                  <span class="error-message"></span>
+                              </div>
+                              
+                                <div class="mb-3 col-md-6">
+                                    <label class="form-label" for="country">Nationality <span class="text-danger">*</span></label>
+                                    <select id="country" name="country" class="form-select" required="">
+                                        <option value="#" selected>Select Your Nationality</option>
+                                        {% for country in countries %}
+                                        <option value="{{ country['country_id'] }}">{{ country['country_name'] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label for="Address" class="form-label">Address <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" required="" id="Address" name="Address" placeholder="Enter your Address">
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" required="">
+                                        <label class="form-check-label" for="terms-conditions">
+                                            I agree to <a href="javascript:void(0);" style="color: #783b64">privacy policy & terms</a> <span class="text-danger">*</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary d-grid w-100" type="submit" id="signupbtn" style="background-color: #A993FF; border: #f8020b;">Sign up</button>
+                        </form>
+
+                        <p class="text-center">
+                            <span>Already have an account? </span><a href="/signin" style="color: #A993FF;">
+                                <span>Sign in instead</span>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                <!-- Register Card -->
+            </div>
         </div>
-        <!-- Register Card -->
-      </div>
     </div>
-  </div>
+</div>
+
   <!-- / Content -->
+  
 
   <!-- Core JS -->
   <!-- build:js assets/vendor/js/core.js -->
-  <script src="{{ url_for('static', filename='vendor/libs/jquery/jquery.js') }}"></script>
+  
+
+</body>
+<script src="{{ url_for('static', filename='vendor/libs/jquery/jquery.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/libs/popper/popper.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/js/bootstrap.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
@@ -163,19 +176,143 @@
   <!-- Place this tag in your head or just before your close body tag. -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Custom JS to show image preview and validate form -->
-  <script>
-    function showPreview(event) {
-        if (event.target.files.length > 0) {
-            let src = URL.createObjectURL(event.target.files[0]);
-            let preview = document.getElementById("uploadedAvatar");
-            preview.src = src;
-            preview.style.display = "block";
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <script>
+  $(document).ready(function() {
+  $('#c_password').on('keyup', function() {
+      var password = $('#password').val();
+      var c_password = $(this).val();
+      if (password.length === 0 || c_password.length === 0) {
+          resetInput($('#password'));
+          resetInput($(this).closest('.input-group'));
+          isConfirmPasswordValid = false;
+      } else if (password !== c_password) {
+          setInvalid($(this).closest('.input-group'), 'Passwords do not match');
+          isConfirmPasswordValid = false;
+      } else {
+          setValid($(this).closest('.input-group'), 'Passwords match');
+          isConfirmPasswordValid = true;
+      }
+  });
+
+  function resetInput(input) {
+      input.css('border-color', '');
+      input.closest('.form-password-toggle').find('.error-message').text('');
+      input.closest('.form-password-toggle').find('.input-group-text').removeClass('border-invalid').removeClass('border-valid');
+  }
+
+  function setInvalid(inputGroup, message) {
+      inputGroup.find('input').css('border-color', 'red');
+      inputGroup.closest('.form-password-toggle').find('.error-message').css('color', 'red').text(message);
+      inputGroup.closest('.form-password-toggle').find('.input-group-text').removeClass('border-valid').addClass('border-invalid');
+  }
+
+  function setValid(inputGroup, message) {
+      inputGroup.find('input').css('border-color', 'green');
+      inputGroup.closest('.form-password-toggle').find('.error-message').css('color', 'green').text(message);
+      inputGroup.closest('.form-password-toggle').find('.input-group-text').removeClass('border-invalid').addClass('border-valid');
+  }
+  
+    $('#formRegister').on('submit', function(event) {
+        var password = $('#password').val();
+        var c_password = $('#c_password').val();
+        if (password !== c_password) {
+            event.preventDefault();
+            alert('Passwords do not match.');
         }
+    });
+  });
+
+  $(document).ready(function() {
+    var isUsernameValid = false;
+    var isEmailValid = false;
+    var isPasswordValid = false;
+
+    $('#username').on('keyup', function() {
+        var username = $(this).val();
+        if (username.length === 0) {
+            resetInput($(this));
+            isUsernameValid = false;
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: '/check_username',
+                data: { username: username },
+                success: function(response) {
+                    if (response.exists) {
+                        setInvalid($(this), 'Username already used');
+                        isUsernameValid = false;
+                    } else {
+                        setValid($(this), 'Username available');
+                        isUsernameValid = true;
+                    }
+                }.bind(this)
+            });
+        }
+    });
+
+    $('#email').on('keyup', function() {
+        var email = $(this).val();
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email.length === 0) {
+            resetInput($(this));
+            isEmailValid = false;
+        } else if (!emailPattern.test(email)) {
+            setInvalid($(this), 'Invalid email format');
+            isEmailValid = false;
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: '/check_email',
+                data: { email: email },
+                success: function(response) {
+                    if (response.exists) {
+                        setInvalid($(this), 'Email already used');
+                        isEmailValid = false;
+                    } else {
+                        setValid($(this), 'Email available');
+                        isEmailValid = true;
+                    }
+                }.bind(this)
+            });
+        }
+    });
+
+    function resetInput(input) {
+        input.css('border-color', '');
+        input.next('span').remove();
     }
+
+    function setInvalid(input, message) {
+        input.css('border-color', 'red');
+        input.next('span').remove();
+        input.after('<span style="color: red;">' + message + '</span>');
+    }
+
+    function setValid(input, message) {
+        input.css('border-color', 'green');
+        input.next('span').remove();
+        input.after('<span style="color: green;">' + message + '</span>');
+    }
+
+    $('#formRegister').on('submit', function(event) {
+        if (!isUsernameValid || !isEmailValid || !isPasswordValid) {
+            event.preventDefault();
+            alert('Please fix the errors in the form before submitting.');
+        }
+    });
+});
+
+function showPreview(event) {
+  if (event.target.files.length > 0) {
+      let src = URL.createObjectURL(event.target.files[0]);
+      let preview = document.getElementById("uploadedAvatar");
+      preview.src = src;
+      preview.style.display = "block";
+  }
+}
+
 </script>
 
-
-
-</body>
 
 </html>

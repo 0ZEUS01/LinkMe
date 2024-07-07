@@ -1,6 +1,6 @@
 import os
 import bcrypt
-from flask import Flask, render_template, redirect, url_for, flash, session, current_app, request
+from flask import Flask, jsonify, render_template, redirect, url_for, flash, session, current_app, request
 from flask import Blueprint
 from .forms import SignupForm, SigninForm
 from werkzeug.utils import secure_filename
@@ -16,6 +16,30 @@ def get_countries():
     countries = cursor.fetchall()
     return countries
 
+@auth_blueprint.route('/check_username', methods=['POST'])
+def check_username():
+    username = request.form['username']
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT COUNT(*) AS count FROM users WHERE Username = %s', (username,))
+    result = cursor.fetchone()
+    cursor.close()
+    if result['count'] > 0:
+        return jsonify({'exists': True})
+    else:
+        return jsonify({'exists': False})
+
+@auth_blueprint.route('/check_email', methods=['POST'])
+def check_email():
+    email = request.form['email']
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT COUNT(*) AS count FROM users WHERE email = %s', (email,))
+    result = cursor.fetchone()
+    cursor.close()
+    if result['count'] > 0:
+        return jsonify({'exists': True})
+    else:
+        return jsonify({'exists': False})
+    
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
