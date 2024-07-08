@@ -131,11 +131,13 @@ def search_jobs():
         all_jobs = get_all_jobs()
         filtered_jobs = filter_jobs(all_jobs, user_skills, query)
 
-        return render_template('jobs.html', job_data=filtered_jobs, job_offers=[])
+        no_results = len(filtered_jobs) == 0
+
+        return render_template('jobs.html', job_data=filtered_jobs, job_offers=[], no_results=no_results)
 
     except Exception as e:
         print(f"Error: {e}")
-        return render_template('jobs.html', job_data=[], job_offers=[])
+        return render_template('jobs.html', job_data=[], job_offers=[], no_results=False)
 
 def filter_jobs(all_jobs, user_skills, query):
     job_data = []

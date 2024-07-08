@@ -181,17 +181,21 @@ background-size: cover;>
                     <div class="row">
                         {% if job_data %}
                             {% for job in job_data %}
-                            <div class="item col-lg-4">
-                                <div class="meeting-item">
-                                    <div class="down-content">
-                                        <a href="https://www.google.com/search?q={{ job.job_title | urlencode }}" target="_blank">
-                                            <img src="{{ url_for('static', filename='img/icons/businessman.png') }}" style="width:40px; height:40px">
-                                            <h4>&nbsp&nbsp {{ job.job_title }}</h4>
-                                        </a>&nbsp&nbsp {{ job.similarity | round(2) }}%
+                                <div class="item col-lg-4">
+                                    <div class="meeting-item">
+                                        <div class="down-content">
+                                            <a href="https://www.google.com/search?q={{ job.job_title | urlencode }}" target="_blank">
+                                                <img src="{{ url_for('static', filename='img/icons/businessman.png') }}" style="width:40px; height:40px">
+                                                <h4>&nbsp&nbsp {{ job.job_title }}</h4>
+                                            </a>&nbsp&nbsp {{ job.similarity | round(2) }}%
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             {% endfor %}
+                        {% elif no_results %}
+                            <div class="col-lg-12">
+                                <p class="no-jobs-message">No job with this title exists.</p>
+                            </div>
                         {% else %}
                             <div class="col-lg-12">
                                 <p class="no-jobs-message">No Potential Jobs available for your actual skills now. Try to add &nbsp<a href="{{ url_for('profile_blueprint.skills') }}">new skills</a>.</p>

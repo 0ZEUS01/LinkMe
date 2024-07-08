@@ -82,7 +82,6 @@ def profile():
                 else:
                     profile_pic_path = request.form.get('original_profile_pic')
 
-                # Update profile picture path in user data
                 user_data = {
                     'id': id,
                     'firstName': request.form.get('firstName'),
@@ -98,6 +97,13 @@ def profile():
 
                 try:
                     save_user_data(user_data, filename if profile_pic.filename else None)
+                    # Update session variables
+                    session['email'] = user_data['email']
+                    session['username'] = user_data['Username']
+                    session['profile_pic_path'] = user_data['profile_pic_path']
+                    session['first_name'] = user_data['firstName']
+                    session['last_name'] = user_data['lastName']
+                    session['nationality'] = user_data['country']
                     flash('Profile picture updated successfully!', 'success')
                 except Exception as e:
                     flash('An error occurred while updating profile picture.', 'danger')
@@ -120,6 +126,13 @@ def profile():
 
             try:
                 save_user_data(user_data)
+                # Update session variables
+                session['email'] = user_data['email']
+                session['username'] = user_data['Username']
+                session['profile_pic_path'] = user_data['profile_pic_path']
+                session['first_name'] = user_data['firstName']
+                session['last_name'] = user_data['lastName']
+                session['nationality'] = user_data['country']
                 flash('Profile updated successfully!', 'success')
             except Exception as e:
                 flash('An error occurred while updating profile.', 'danger')
