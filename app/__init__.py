@@ -9,10 +9,12 @@ def create_app():
     from app.blueprints.auth.auth import auth_blueprint
     from app.blueprints.profile.profile import profile_blueprint
     from app.blueprints.job.job import job_blueprint
+    from app.blueprints.home.home import home_blueprint
 
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(profile_blueprint, url_prefix='/profile')
     app.register_blueprint(job_blueprint)
+    app.register_blueprint(home_blueprint)
 
     app.config['SECRET_KEY'] = 'your_secret_key'
     app.config['MYSQL_HOST'] = 'localhost'

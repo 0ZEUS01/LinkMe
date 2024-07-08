@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="TemplateMo">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+
+    <title>Home</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/icons/linkme.png') }}" />
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='home/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='home/css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='home/css/templatemo-edu-meeting.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='home/css/owl.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='home/css/lightbox.css') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+    <link href="{{ url_for('static', filename='home/css/team.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='home/css/responsive.css') }}" rel="stylesheet" />
+</head>
+
+<body>
+    <section class="section main-banner" id="top" data-section="section1">
+        <video autoplay muted loop id="bg-video">
+            <source src="{{ url_for('static', filename='home/images/course_video.mp4') }}" type="video/mp4" />
+        </video>
+
+        <div class="video-overlay header-text">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="caption">
+                            <h6 hidden>Hello </h6>
+                            <p style="font-size: 32px;">WELCOME TO <span style="color: aliceblue;">Link</span><span style="color: #783b64;">Me</span></p><br>
+                            <p>This is a career recommendation website to help you find the best offers around the
+                                world.</p><br><br>
+                            <button type="submit" class="btn btn-primary me-2"
+                                style="background-color: #A993FF; border: #f8020b;  border-top-right-radius: 20px;border-top-left-radius: 20px;border-bottom-right-radius: 20px;border-bottom-left-radius: 20px;">
+                                Read More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ***** Header Area Start ***** -->
+    <header class="header-area header-sticky">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <!-- ***** Logo Start ***** -->
+                        <a href="" class="logo">
+                            <img src="{{ url_for('static', filename='img/icons/linkme.png') }}" alt="logo" width="80px" height="80px" />
+                        </a>
+                        <!-- ***** Logo End ***** -->
+                        <!-- ***** Menu Start ***** -->
+                        <ul class="nav">
+                            <li><a href="">About</a></li>
+                            <li><a href="">Services</a></li>
+                            <li><a href="">Why Us</a></li>
+                            <li><a href="">Team</a></li>
+                            <li><a href="">Jobs</a></li>
+                            <li><a href="">Profile <svg
+                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-person" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z" />
+                                    </svg></a></li>
+                        </ul>
+                        <!-- ***** Menu End ***** -->
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class="upcoming-meetings" id="meetings">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-heading">
+                        <h2>Our Services</h2>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="meeting-item">
+                                <div class="down-content">
+                                    <a href="conference_details.html">
+                                        <img src="{{ url_for('static', filename='img/icons/deep-learning.png') }}" alt="Help Desk">
+                                    </a>
+                                    <br><br>
+                                    <a href="conference_details.html">
+                                        <h4>Machine Learning</h4>
+                                    </a>
+                                    We use advanced technologies to match you with the suitable job for you.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="meeting-item">
+                                <div class="down-content">
+                                    <a href="conference_details.html">
+                                        <img src="{{ url_for('static', filename='img/icons/guard.png') }}" alt="Help Desk">
+                                    </a>
+                                    <br><br>
+                                    <a href="conference_details.html">
+                                        <h4>Security</h4>
+                                    </a>
+                                    Your data is secure with advanced hashing technologies.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="meeting-item">
+                                <div class="down-content">
+                                    <a href="conference_details.html">
+                                        <img src="{{ url_for('static', filename='img/icons/help-desk.png') }}" alt="Help Desk">
+                                    </a>
+                                    <br><br>
+                                    <a href="conference_details.html">
+                                        <h4>EXPERT SUPPORT</h4>
+                                    </a>
+                                    We have a great team full of experts who can help you whenever you need.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="upcoming-meetings team_section" style="margin-top: -150px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-heading">
+                        <h2>Our Team</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team_container">
+                <div class="row">
+                    <div class="col-lg-4 col-sm-6">
+                        <div class="box">
+                            <div class="img-box">
+                                <img src="{{ url_for('static', filename='home/images/5.png') }}" class="img1" alt="">
+                            </div>
+                            <div class="detail-box">
+                                <h5>Hida Amal</h5>
+                                <p>Tech Lead</p>
+                            </div>
+                            <div class="social_box">
+                                <a href="#">
+                                    <i class="fa fa-facebook" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-linkedin" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-instagram" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-youtube-play" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-6">
+                        <div class="box">
+                            <div class="img-box">
+                                <img src="{{ url_for('static', filename='home/images/6.png') }}" class="img1" alt="">
+                            </div>
+                            <div class="detail-box">
+                                <h5>Zini Yahya</h5>
+                                <p>Fullstack Developer</p>
+                            </div>
+                            <div class="social_box">
+                                <a href="#">
+                                    <i class="fa fa-facebook" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-linkedin" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-instagram" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-youtube-play" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-6">
+                        <div class="box">
+                            <div class="img-box">
+                                <img src="{{ url_for('static', filename='home/images/7.png') }}" class="img1" alt="">
+                            </div>
+                            <div class="detail-box">
+                                <h5>Essiba Alyae</h5>
+                                <p>UI Designer</p>
+                            </div>
+                            <div class="social_box">
+                                <a href="#">
+                                    <i class="fa fa-facebook" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-linkedin" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-instagram" aria-hidden="true"></i>
+                                </a>
+                                <a href="#">
+                                    <i class="fa fa-youtube-play" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <!-- Bootstrap core JavaScript -->
+    <script src="{{ url_for('static', filename='home/vendor/jquery/jquery.min.js') }}"></script>
+    
+    <script src="{{ url_for('static', filename='home/js/isotope.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='home/js/owl-carousel.js') }}"></script>
+    <script src="{{ url_for('static', filename='home/js/lightbox.js') }}"></script>
+    <script src="{{ url_for('static', filename='home/js/tabs.js') }}"></script>
+    <script src="{{ url_for('static', filename='home/js/video.js') }}"></script>
+    <script src="{{ url_for('static', filename='home/js/slick-slider.js') }}"></script>
+    <script src="{{ url_for('static', filename='home/js/custom.js') }}"></script>
+    <script>
+        //according to loftblog tut
+        $('.nav li:first').addClass('active');
+
+        var showSection = function showSection(section, isAnimate) {
+            var
+                direction = section.replace(/#/, ''),
+                reqSection = $('.section').filter('[data-section="' + direction + '"]'),
+                reqSectionPos = reqSection.offset().top - 0;
+
+            if (isAnimate) {
+                $('body, html').animate({
+                    scrollTop: reqSectionPos
+                },
+                    800);
+            } else {
+                $('body, html').scrollTop(reqSectionPos);
+            }
+
+        };
+
+        var checkSection = function checkSection() {
+            $('.section').each(function () {
+                var
+                    $this = $(this),
+                    topEdge = $this.offset().top - 80,
+                    bottomEdge = topEdge + $this.height(),
+                    wScroll = $(window).scrollTop();
+                if (topEdge < wScroll && bottomEdge > wScroll) {
+                    var
+                        currentId = $this.data('section'),
+                        reqLink = $('a').filter('[href*=\\#' + currentId + ']');
+                    reqLink.closest('li').addClass('active').
+                        siblings().removeClass('active');
+                }
+            });
+        };
+
+        $('.main-menu, .responsive-menu, .scroll-to-section').on('click', 'a', function (e) {
+            e.preventDefault();
+            showSection($(this).attr('href'), true);
+        });
+
+        $(window).scroll(function () {
+            checkSection();
+        });
+    </script>
+    <style>
+        .down-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .down-content img {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</body>
+
+</html>
