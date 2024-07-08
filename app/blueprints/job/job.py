@@ -1,5 +1,5 @@
 import MySQLdb
-from flask import Blueprint, render_template, session, redirect, url_for, request
+from flask import Blueprint, current_app, render_template, session, redirect, url_for, request
 from app import mysql
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -18,6 +18,12 @@ def get_user_skills(user_id):
     skills = cursor.fetchall()
     cursor.close()
     return " ".join(skill['skill_name'] for skill in skills)
+
+def get_countries():
+    cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT country_id, country_name FROM country')
+    countries = cursor.fetchall()
+    return countries
 
 def get_all_jobs():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -38,16 +44,17 @@ def jobs():
         all_jobs = get_all_jobs()
 
         if not user_skills or not all_jobs:
-            return render_template('Home.html', job_data=[], job_offers=[])
+            return render_template('jobs.html', job_data=[], job_offers=[], countries=get_countries())
 
         potential_jobs = get_potential_jobs(user_skills, all_jobs)
         job_offers = get_job_offers(user_skills, all_jobs)
 
-        return render_template('Home.html', job_data=potential_jobs, job_offers=job_offers)
+        return render_template('jobs.html', job_data=potential_jobs, job_offers=job_offers, countries=get_countries())
 
     except Exception as e:
         print(f"Error: {e}")
-        return render_template('Home.html', job_data=[], job_offers=[])
+        return render_template('jobs.html', job_data=[], job_offers=[], countries=get_countries())
+
 
 def get_potential_jobs(user_skills, all_jobs):
     job_data = []
@@ -124,11 +131,11 @@ def search_jobs():
         all_jobs = get_all_jobs()
         filtered_jobs = filter_jobs(all_jobs, user_skills, query)
 
-        return render_template('Home.html', job_data=filtered_jobs, job_offers=[])
+        return render_template('jobs.html', job_data=filtered_jobs, job_offers=[])
 
     except Exception as e:
         print(f"Error: {e}")
-        return render_template('Home.html', job_data=[], job_offers=[])
+        return render_template('jobs.html', job_data=[], job_offers=[])
 
 def filter_jobs(all_jobs, user_skills, query):
     job_data = []

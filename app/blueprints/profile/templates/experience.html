@@ -90,8 +90,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block">{{ session[first_name] }} {{ session[last_name] }}</span>
-                                                    <small class="text-muted">{% for country in countries %}{% if country['country_id'] == session['nationality'] %} {{ country['country_name'] }} {% endif %}{% endfor %}</small>
+                                                    <span class="fw-semibold d-block">{{ session['first_name'] }} {{ session['last_name'] }}</span>
+                                                    <small class="text-muted">
+                                                        {% for country in countries %}
+                                                        {% if country['country_id'] == session['nationality'] %}
+                                                            {{ country['country_name'] }}
+                                                        {% endif %}
+                                                    {% endfor %}</small></small>
                                                 </div>
                                             </div>
                                         </a>

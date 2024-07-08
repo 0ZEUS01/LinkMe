@@ -202,7 +202,7 @@ def experiences():
     experiences = cursor.fetchall()
     cursor.close()
 
-    return render_template('experience.html', experiences=experiences)
+    return render_template('experience.html', experiences=experiences, countries = get_countries())
 
 
 @profile_blueprint.route('/add_experience', methods=['POST'])
@@ -276,7 +276,7 @@ def skills():
     user_skills = cursor.fetchall()
     cursor.close()
 
-    return render_template('skill.html', skills=user_skills)
+    return render_template('skill.html', skills=user_skills, countries = get_countries())
 
 @profile_blueprint.route('/add_skill', methods=['POST'])
 def add_skill():
