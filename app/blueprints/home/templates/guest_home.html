@@ -4,6 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="TemplateMo">
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900" rel="stylesheet">
 
     <title>Home</title>
@@ -26,6 +28,30 @@
 </head>
 
 <body>
+    <section class="section main-banner" id="top" data-section="section1">
+        <video autoplay muted loop id="bg-video">
+            <source src="{{ url_for('static', filename='home/images/course_video.mp4') }}" type="video/mp4" />
+        </video>
+
+        <div class="video-overlay header-text">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="caption">
+                            <h6 hidden>Hello </h6>
+                            <p style="font-size: 32px;">WELCOME TO <span style="color: aliceblue;">Link</span><span style="color: #783b64;">Me</span></p><br>
+                            <p>This is a career recommendation website to help you find the best offers around the
+                                world.</p><br><br>
+                            <button type="submit" class="btn btn-primary me-2"
+                                style="background-color: #A993FF; border: #f8020b;  border-top-right-radius: 20px;border-top-left-radius: 20px;border-bottom-right-radius: 20px;border-bottom-left-radius: 20px;">
+                                Read More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ***** Header Area Start ***** -->
     <header class="header-area header-sticky">
         <div class="container">
             <div class="row">
@@ -40,16 +66,8 @@
                         <ul class="nav">
                             <li><a href="#Services">Services</a></li>
                             <li><a href="#team_section">Team</a></li>
-                            <li><a href="/jobs">Jobs</a></li>
-                            {% if isAdmin %}
-                            <li><a href="/admin">Admin panel</a></li>
-                            {% endif %}
-                            <li><a href="/profile/profile">Profile <svg
-                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-person" viewBox="0 0 16 16">
-                                        <path
-                                            d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z" />
-                                    </svg></a></li>
+                            <li><a href="/signin">Jobs</a></li>
+                            <li><a href="/signin">Join Us</a></li>
                         </ul>
                         <!-- ***** Menu End ***** -->
                     </nav>
@@ -57,31 +75,6 @@
             </div>
         </div>
     </header>
-    <section class="section main-banner" id="top" data-section="section1">
-        <video autoplay muted loop id="bg-video">
-            <source src="{{ url_for('static', filename='home/images/course_video.mp4') }}" type="video/mp4" />
-        </video>
-
-        <div class="video-overlay header-text">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="caption">
-                            <h6 hidden>Hello </h6>
-                            <p style="font-size: 32px;">WELCOME TO <span style="color: aliceblue;">Link</span><span style="color: #783b64;">Me</span> {{session['first_name']}}  {{session['last_name']}}</p><br>
-                            <p>This is a career recommendation website to help you find the best offers around the
-                                world.</p><br><br>
-                            <button type="submit" class="btn btn-primary me-2"
-                                style="background-color: #A993FF; border: #f8020b;  border-top-right-radius: 20px;border-top-left-radius: 20px;border-bottom-right-radius: 20px;border-bottom-left-radius: 20px;">
-                                Read More</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ***** Header Area Start ***** -->
-    
     <section class="upcoming-meetings " id="Services">
         <div class="container">
             <div class="row">
