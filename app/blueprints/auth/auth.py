@@ -153,29 +153,33 @@ def logout():
     session.clear()  # Clear all session variables and flash messages
     return redirect(url_for('auth_blueprint.signin'))
 
-
 @auth_blueprint.route('/signin', methods=['GET', 'POST'])
 def signin():
     form = SigninForm()
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
-        
+
         cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
         account = cursor.fetchone()
 
         if account and bcrypt.checkpw(password.encode('utf-8'), account['password'].encode('utf-8')):
-            session['email'] = email
-            session['username'] = account['username']
+            # Store all user values in session
             session['id'] = account['id']
-            session['profile_pic_path'] = account['profile_pic_path']
             session['first_name'] = account['first_name']
             session['last_name'] = account['last_name']
+            session['email'] = account['email']
+            session['phone_number'] = account['phone_number']
+            session['username'] = account['username']
+            session['birthdate'] = account['birthdate'].strftime('%Y-%m-%d') if account['birthdate'] else None
+            session['Address'] = account['Address']
             session['nationality'] = account['nationality']
+            session['profile_pic_path'] = account['profile_pic_path']
+            session['isAdmin'] = account['isAdmin']
             cursor.close()
             return redirect(url_for('profile_blueprint.profile'))
-        
+
         cursor.close()
         flash('Invalid email or password!', 'danger')
 

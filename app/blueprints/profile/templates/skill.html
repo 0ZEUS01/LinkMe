@@ -7,7 +7,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Profile</title>
+    <title>Skills</title>
 
     <meta name="description" content="" />
 
@@ -78,6 +78,11 @@
                         <!-- /Search -->
 
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
+                            <li><a href="/home#Services" style="padding-right: 10px;">SERVICES</a></li>
+                            <li><a href="/home#team_section" style="padding-right: 10px;">TEAM</a></li>
+                            {% if session.isAdmin %}
+                            <li style="padding-right: 10px;"><a href="/admin">ADMIN PANEL</a></li>
+                            {% endif %}
                             <li class="nav-item" style="padding-right: 10px;"><a href="/jobs">JOBS</a></li>
 
                             <!-- User -->
