@@ -59,3 +59,35 @@ def search_users_route():
     query = request.args.get('query', '')
     users = search_users(query)
     return jsonify(users)
+
+@admin_blueprint.route('/toggle_ban_user', methods=['POST'])
+def toggle_ban_user():
+    if 'id' not in session or not is_admin(session['id']):
+        flash('Access denied: This action is only for website admins.', 'error')
+        return redirect(url_for('admin_blueprint.admin'))
+
+    user_id_to_toggle = request.form.get('user_id')
+    if not user_id_to_toggle:
+        flash('No user specified.', 'error')
+        return redirect(url_for('admin_blueprint.admin'))
+
+    cursor = current_app.mysql.connection.cursor(DictCursor)
+    cursor.execute('SELECT isBanned FROM users WHERE id = %s', (user_id_to_toggle,))
+    user = cursor.fetchone()
+
+    if user:
+        new_ban_status = not user['isBanned']
+        cursor.execute('UPDATE users SET isBanned = %s WHERE id = %s', (new_ban_status, user_id_to_toggle))
+        current_app.mysql.connection.commit()
+        cursor.close()
+
+        if new_ban_status:
+            flash('User has been banned successfully.', 'success')
+        else:
+            flash('User has been unbanned successfully.', 'success')
+    else:
+        flash('User not found.', 'error')
+        cursor.close()
+
+    return redirect(url_for('admin_blueprint.admin'))
+

@@ -164,23 +164,26 @@ def signin():
         cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
         account = cursor.fetchone()
 
-        if account and bcrypt.checkpw(password.encode('utf-8'), account['password'].encode('utf-8')):
-            # Store all user values in session
-            session['id'] = account['id']
-            session['first_name'] = account['first_name']
-            session['last_name'] = account['last_name']
-            session['email'] = account['email']
-            session['phone_number'] = account['phone_number']
-            session['username'] = account['username']
-            session['birthdate'] = account['birthdate'].strftime('%Y-%m-%d') if account['birthdate'] else None
-            session['Address'] = account['Address']
-            session['nationality'] = account['nationality']
-            session['profile_pic_path'] = account['profile_pic_path']
-            session['isAdmin'] = account['isAdmin']
-            cursor.close()
-            return redirect(url_for('home_blueprint.home'))
+        if account:
+            if account['isBanned']:
+                flash('Your account is banned. Please contact support.', 'signin_error')
+            elif bcrypt.checkpw(password.encode('utf-8'), account['password'].encode('utf-8')):
+                session['id'] = account['id']
+                session['first_name'] = account['first_name']
+                session['last_name'] = account['last_name']
+                session['email'] = account['email']
+                session['phone_number'] = account['phone_number']
+                session['username'] = account['username']
+                session['birthdate'] = account['birthdate'].strftime('%Y-%m-%d') if account['birthdate'] else None
+                session['Address'] = account['Address']
+                session['nationality'] = account['nationality']
+                session['profile_pic_path'] = account['profile_pic_path']
+                session['isAdmin'] = account['isAdmin']
+                cursor.close()
+                return redirect(url_for('home_blueprint.home'))
 
         cursor.close()
-        flash('Invalid email or password!', 'signin_error')  # Unique category for sign-in errors
+        flash('Invalid email or password!', 'signin_error')
 
     return render_template('signin.html', form=form)
+

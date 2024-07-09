@@ -23,6 +23,7 @@ CREATE TABLE users (
 			nationality INT,
             profile_pic_path VARCHAR(255),
 			isAdmin BIT DEFAULT 0,
+            isBanned BIT DEFAULT 0,
 			CONSTRAINT FK_COUNTRY_USERS FOREIGN KEY (nationality) REFERENCES Country(country_id),
             CONSTRAINT UNIQUE_EMAIL UNIQUE (email),
             CONSTRAINT UNIQUE_USERNAME UNIQUE (username)

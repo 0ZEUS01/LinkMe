@@ -44,9 +44,9 @@ def save_user_data(data, profile_pic_filename=None):
     try:
         cursor.execute('''
             UPDATE users 
-            SET first_name=%s, last_name=%s, username=%s, email=%s, phone_number=%s, nationality=%s, address=%s, profile_pic_path=%s
+            SET first_name=%s, last_name=%s, username=%s, email=%s, phone_number=%s, nationality=%s, address=%s, birthdate=%s, profile_pic_path=%s
             WHERE id=%s
-        ''', (data['firstName'], data['lastName'], data['Username'], data['email'], data['phoneNumber'], data['country'], data['address'], profile_pic_path, data['id']))
+        ''', (data['firstName'], data['lastName'], data['Username'], data['email'], data['phoneNumber'], data['country'], data['address'], data['birthdate'], profile_pic_path, data['id']))
         
         current_app.mysql.connection.commit()
     except Exception as e:
@@ -92,6 +92,7 @@ def profile():
                     'country': request.form.get('country'),
                     'address': request.form.get('address'),
                     'password': '', 
+                    'birthdate': request.form.get('birthdate'),
                     'profile_pic_path': filename if profile_pic.filename else request.form.get('original_profile_pic')
                 }
 
@@ -193,15 +194,21 @@ def deleteAccount():
     user_id = session['id']
     
     cursor = current_app.mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    
+    cursor.execute('DELETE FROM user_skills WHERE id = %s', (user_id,))
+    
+    cursor.execute('DELETE FROM experiences WHERE id = %s', (user_id,))
+    
     cursor.execute('DELETE FROM users WHERE id = %s', (user_id,))
+    
     current_app.mysql.connection.commit()
     cursor.close()
     
-    # Clear the entire session
     session.clear()
     
     flash('User deleted successfully!', 'success')
     return redirect(url_for('auth_blueprint.signin'))
+
 
 
 @profile_blueprint.route('/experiences', methods=['GET'])

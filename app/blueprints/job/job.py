@@ -81,7 +81,7 @@ def get_potential_jobs(user_skills, all_jobs):
     similarities = cosine_similarity(user_vector, job_vectors).flatten()
 
     for job, similarity in zip(job_data, similarities):
-        job['similarity'] = similarity * 100  # Convert similarity to percentage
+        job['similarity'] = similarity * 100 
 
     return job_data
 
