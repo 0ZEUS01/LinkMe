@@ -61,7 +61,7 @@ def save_user_data(data, profile_pic_filename=None):
     
     current_app.mysql.connection.commit()
 
-@auth_blueprint.route('/', methods=['GET', 'POST'])
+@auth_blueprint.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
     countries = get_countries()
@@ -178,7 +178,7 @@ def signin():
             session['profile_pic_path'] = account['profile_pic_path']
             session['isAdmin'] = account['isAdmin']
             cursor.close()
-            return redirect(url_for('profile_blueprint.profile'))
+            return redirect(url_for('home_blueprint.home'))
 
         cursor.close()
         flash('Invalid email or password!', 'danger')

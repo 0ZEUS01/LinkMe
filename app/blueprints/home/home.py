@@ -30,6 +30,6 @@ def home():
         return render_template('guest_home.html')  # Render guest_home if not logged in
 
 
-@home_blueprint.route('/guest_home', methods=['GET'])
+@home_blueprint.route('/', methods=['GET'])
 def guest_home():
     return render_template('guest_home.html')

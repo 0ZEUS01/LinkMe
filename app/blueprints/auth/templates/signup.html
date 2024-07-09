@@ -57,7 +57,7 @@
                     <h4 class="mb-2">Adventure starts here 🚀</h4>
                     <p class="mb-3"></p>
 
-                    <form id="formRegister" class="mb-3" action="/" method="POST" enctype="multipart/form-data">
+                    <form id="formRegister" class="mb-3" action="/signup" method="POST" enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
                         <div class="row">
                             <div class="card-body">
@@ -296,7 +296,7 @@
     }
 
     $('#formRegister').on('submit', function(event) {
-        if (!isUsernameValid || !isEmailValid || !isPasswordValid) {
+        if (!isUsernameValid || !isEmailValid ) {
             event.preventDefault();
             alert('Please fix the errors in the form before submitting.');
         }
