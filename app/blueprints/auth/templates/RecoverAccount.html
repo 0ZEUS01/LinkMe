@@ -51,8 +51,8 @@
                             <img src="{{ url_for('static', filename='img/icons/linkme.png') }}" alt="logo" width="100px">
                         </a>
                     </div>
-                    <h4 class="mb-2">Recover Your Link<span style="color: #783b64;">Me</span> account! 👋</h4>
-                    <p class="mb-4"></p>
+                    <h4 class="mb-2">Recover Your Link<span style="color: #783b64;">Me</span> Account! 👋</h4>
+                    <p class="mb-4">Enter your email to receive a verification code.</p>
                     {% with messages = get_flashed_messages(with_categories=true) %}
                         {% if messages %}
                             <div class="alert alert-danger" role="alert">
@@ -63,7 +63,7 @@
                         {% endif %}
                     {% endwith %}
                     
-                    <form id="formLogin" class="SigninForm mb-3" action="{{ url_for('auth_blueprint.recoverPassword') }}" method="POST">
+                    <form id="formRecoverPassword" class="mb-3" action="{{ url_for('auth_blueprint.recover_password') }}" method="POST">
                         {{ form.hidden_tag() }}
                         {{ form.csrf_token }}
                         <div class="mb-3">
@@ -71,21 +71,20 @@
                             {{ form.email(class_="form-control", placeholder="Enter your email", autofocus=True) }}
                         </div>
                         <div class="mb-3">
-                            {{ form.submit(class_="btn btn-primary d-grid w-100", style="background-color: #A993FF; border: #f8020b;") }}
+                            {{ form.submit(class_="btn btn-primary d-grid w-100", style="background-color: #A993FF; border: #f8020b;", value="Send Verification Code") }}
                         </div>
                     </form>
                     
                     <p class="text-center">
-                        <span>You remembered your password?</span>
-                        <a href="{{ url_for('auth_blueprint.signin') }}">
-                            <span style="color: #783b64">Login</span>
-                        </a>
+                        <span>Remembered your password?</span>
+                        <a href="{{ url_for('auth_blueprint.signin') }}" style="color: #783b64">Login</a>
                     </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
   <script src="{{ url_for('static', filename='vendor/libs/jquery/jquery.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/libs/popper/popper.js') }}"></script>

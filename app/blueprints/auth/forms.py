@@ -25,3 +25,17 @@ class SigninForm(FlaskForm):
 class RecoverPasswordForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Get Verification code')
+
+
+class VerifyCodeForm(FlaskForm):
+    code = StringField('Verification Code', validators=[DataRequired()])
+    submit = SubmitField('Verify Code')
+
+
+class NewPasswordForm(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired(), Length(min=3)])
+    confirm_password = PasswordField('Confirm New Password', validators=[
+        DataRequired(),
+        EqualTo('password', message='Passwords must match')
+    ])
+    submit = SubmitField('Reset Password')

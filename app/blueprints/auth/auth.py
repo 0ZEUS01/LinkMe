@@ -1,10 +1,16 @@
+from flask_mail import Message
 import os
+from werkzeug.security import generate_password_hash, check_password_hash
+import random
+import string
 import bcrypt
+import time
 from flask import Flask, jsonify, render_template, redirect, url_for, flash, session, current_app, request
 from flask import Blueprint
-from .forms import RecoverPasswordForm, SignupForm, SigninForm
+from .forms import NewPasswordForm, RecoverPasswordForm, SignupForm, SigninForm, VerifyCodeForm
 from werkzeug.utils import secure_filename
 import MySQLdb.cursors
+from app import mail, mysql 
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, static_folder='static', template_folder='templates')
 
@@ -141,16 +147,10 @@ def username_exists(username):
     account = cursor.fetchone()
     return bool(account)
 
-@auth_blueprint.route('/recoverPassword', methods=['GET'])
-def recoverPassword():
-    form = RecoverPasswordForm()
-    
-    return render_template('recoverAccount.html', form=form)
-
 
 @auth_blueprint.route('/logout', methods=['GET'])
 def logout():
-    session.clear()  # Clear all session variables and flash messages
+    session.clear()  
     return redirect(url_for('auth_blueprint.signin'))
 
 @auth_blueprint.route('/signin', methods=['GET', 'POST'])
@@ -187,3 +187,75 @@ def signin():
 
     return render_template('signin.html', form=form)
 
+@auth_blueprint.route('/recover_password', methods=['GET', 'POST'])
+def recover_password():
+    form = RecoverPasswordForm()
+    
+    if form.validate_on_submit():
+        last_code_time = session.get('last_code_time')
+        if last_code_time and time.time() - last_code_time < 30:
+            flash('Please wait 30 seconds before requesting a new code.', 'error')
+            return redirect(url_for('auth_blueprint.recover_password'))
+        
+        email = form.email.data
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+        user = cursor.fetchone()
+        
+        if user:
+            verification_code = ''.join(random.choices(string.digits, k=6))
+            session['verification_code'] = verification_code
+            session['email'] = email
+            session['last_code_time'] = time.time()
+            
+            msg = Message('Password Recovery', sender='linkme.pfa@gmail.com', recipients=[email])
+            msg.body = f'Your verification code is {verification_code}. This is a message from LinkMe team.'
+            mail.send(msg)
+            
+            flash('Verification code sent to your email.', 'success')
+            return redirect(url_for('auth_blueprint.verify_code'))
+        else:
+            flash('Email does not exist.', 'error')
+    
+    return render_template('recoverAccount.html', form=form)
+
+@auth_blueprint.route('/verify_code', methods=['GET', 'POST'])
+def verify_code():
+    form = VerifyCodeForm()
+    
+    if form.validate_on_submit():
+        code = form.code.data
+        
+        if code == session.get('verification_code'):
+            session.pop('verification_code', None)  # Clear verification code from session
+            return redirect(url_for('auth_blueprint.new_password'))
+        else:
+            flash('Invalid verification code.', 'error')
+            return redirect(url_for('auth_blueprint.verify_code'))
+    
+    return render_template('verifyCode.html', form=form)
+
+@auth_blueprint.route('/new_password', methods=['GET', 'POST'])
+def new_password():
+    form = NewPasswordForm()
+    
+    if form.validate_on_submit():
+        password = form.password.data
+        confirm_password = form.confirm_password.data
+        
+        if password != confirm_password:
+            flash('Passwords do not match.', 'error')
+            return redirect(url_for('auth_blueprint.new_password'))
+        
+        email = session.get('email')
+        hashed_password = hash_password(password)  # Hash the new password
+        
+        cursor = mysql.connection.cursor()
+        cursor.execute('UPDATE users SET password = %s WHERE email = %s', (hashed_password, email))
+        mysql.connection.commit()
+        cursor.close()
+        
+        flash('Your password has been reset successfully.', 'success')
+        return redirect(url_for('auth_blueprint.signin'))
+    
+    return render_template('newPassword.html', form=form)

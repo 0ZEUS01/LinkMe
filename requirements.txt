@@ -13,3 +13,4 @@ mysql-connector-python
 openpyxl
 email_validator
 Flask-Bcrypt
+Flask-Mail
