@@ -181,6 +181,6 @@ def signin():
             return redirect(url_for('home_blueprint.home'))
 
         cursor.close()
-        flash('Invalid email or password!', 'danger')
+        flash('Invalid email or password!', 'signin_error')  # Unique category for sign-in errors
 
     return render_template('signin.html', form=form)

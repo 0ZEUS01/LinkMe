@@ -53,16 +53,23 @@
                     </div>
                     <h4 class="mb-2">Welcome to Link<span style="color: #783b64;">Me</span>! 👋</h4>
                     <p class="mb-4">Please sign-in to your account and start the adventure</p>
-                    
+
                     {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            <div class="alert alert-danger" role="alert">
-                                {% for category, message in messages %}
-                                    {{ message }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    {% endwith %}
+                    {% if messages %}
+                        
+                            {% for category, message in messages %}
+                                {% if category == 'signin_error' %}  
+                                    
+                                <div class="alert alert-danger" role="alert">
+                                {{ message }}
+                                </div>
+                                
+                                    {% endif %}
+                            {% endfor %}
+                        
+                    {% endif %}
+                {% endwith %}
+                
                     
                     <form id="formLogin" class="SigninForm mb-3" action="{{ url_for('auth_blueprint.signin') }}" method="POST">
                         {{ form.hidden_tag() }}

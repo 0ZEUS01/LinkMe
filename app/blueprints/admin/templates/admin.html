@@ -186,7 +186,11 @@
                                                 <td>{{ user.username }}</td>
                                                 <td>{{ user.phone_number }}</td>
                                                 <td>{{ user.Address }}</td>
-                                                <td>{{ user.nationality }}</td>
+                                                <td>{% for country in countries %}
+                                                    {% if country['country_id'] == user['nationality'] %}
+                                                        {{ country['country_name'] }}
+                                                    {% endif %}
+                                                {% endfor %}</td>
                                                 <td>{% if user.isAdmin %}
                                                     Admin
                                                     {% else %}
