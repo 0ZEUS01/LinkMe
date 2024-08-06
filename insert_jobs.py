@@ -33,10 +33,10 @@ for index, row in jobs_df.iterrows():
     # Insert into MySQL table
     cursor.execute('''
         INSERT INTO jobs (job_title, job_description, required_skills, salary_range, location,
-                          company, experience_level, industry, job_type, date_posted)
+                            company, experience_level, industry, job_type, date_posted)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     ''', (job_title, job_description, required_skills, salary_range, location,
-          company, experience_level, industry, job_type, date_posted))
+            company, experience_level, industry, job_type, date_posted))
 
 # Commit changes and close connection
 connection.commit()
